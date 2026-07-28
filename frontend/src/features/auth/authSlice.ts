@@ -29,6 +29,13 @@ const authSlice = createSlice({
       localStorage.setItem('aivoa_token', action.payload.token)
       localStorage.setItem('aivoa_user', JSON.stringify(action.payload.user))
     },
+    updateUser: (state, action: PayloadAction<{ name?: string; role?: string }>) => {
+      if (state.user) {
+        if (action.payload.name !== undefined) state.user.name = action.payload.name
+        if (action.payload.role !== undefined) state.user.role = action.payload.role
+        localStorage.setItem('aivoa_user', JSON.stringify(state.user))
+      }
+    },
     logout: (state) => {
       state.user = null
       state.token = null
@@ -42,5 +49,5 @@ const authSlice = createSlice({
   },
 })
 
-export const { setCredentials, logout, setLoading } = authSlice.actions
+export const { setCredentials, updateUser, logout, setLoading } = authSlice.actions
 export default authSlice.reducer
