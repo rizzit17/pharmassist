@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-pharmassist}
       POSTGRES_USER: ${POSTGRES_USER:-pharmassist}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pharmassist_secret}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -33,9 +33,9 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pharmassist}:${POSTGRES_PASSWORD:-pharmassist_secret}@postgres:5432/${POSTGRES_DB:-pharmassist}
+      DATABASE_URL: ${DATABASE_URL}
       GROQ_API_KEY: ${GROQ_API_KEY}
-      JWT_SECRET: ${JWT_SECRET:-dev_secret_change_in_production}
+      JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-1440}
       AUTH_REQUIRED: ${AUTH_REQUIRED:-True}
@@ -45,7 +45,7 @@ services:
       MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-10}
       GROQ_TIMEOUT_SECONDS: ${GROQ_TIMEOUT_SECONDS:-20}
       GROQ_MAX_RETRIES: ${GROQ_MAX_RETRIES:-2}
-      PRIMARY_MODEL: ${PRIMARY_MODEL:-gemma2-9b-it}
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-llama-3.1-8b-instant}
       SECONDARY_MODEL: ${SECONDARY_MODEL:-llama-3.3-70b-versatile}
     volumes:
       - ./backend:/app
@@ -90,7 +90,7 @@ services:
       - postgres
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@pharmassist.local}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
     networks:
