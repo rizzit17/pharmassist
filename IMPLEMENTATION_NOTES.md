@@ -1,6 +1,6 @@
 # IMPLEMENTATION_NOTES.md — Clarifications & Decisions Addendum
 
-This document resolves ambiguities in the Antigravity implementation plan before build starts. Treat these as binding decisions, same authority level as ANTIGRAVITY_MASTER_PROMPT.md and ARCHITECTURE.md.
+This document resolves ambiguities in the implementation plan before build starts. Treat these as binding decisions, same authority level as MASTER_PROMPT.md and ARCHITECTURE.md.
 
 ## 1. Intent Routing — `AMBIGUOUS` vs `GENERAL_QUERY`
 

@@ -57,6 +57,6 @@ This observed loop (extract → populate → assess → correct → re-sync, rep
 
 ## 6. Key Documents in This Repo
 
-- `ANTIGRAVITY_MASTER_PROMPT.md` — the full build specification handed to Antigravity to generate the application.
+- `MASTER_PROMPT.md` — the full build specification used to generate the application.
 - `ARCHITECTURE.md` — system architecture, data flow, LangGraph graph design, schema, and API contract.
 - `README.md` — setup, run, and demo instructions (generated alongside the app).

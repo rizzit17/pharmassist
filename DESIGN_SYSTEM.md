@@ -2,7 +2,7 @@
 
 **Scope: STYLING ONLY.** This document describes CSS/Tailwind-level visual changes to apply to the existing, fully-built application. Do not modify component logic, state management, API contracts, routing, LangGraph nodes, database schema, or any functional behavior. Every change below should be achievable by editing `tailwind.config.ts`, global CSS variables, and className/style props on existing components — no new components, no new props, no new features.
 
-Give this file to Antigravity as: *"Apply this design system as a pure visual restyle. Do not alter any existing functionality, data flow, component structure, or content — only colors, typography, spacing, borders, icons, and micro-interactions."*
+Apply this design system as a pure visual restyle. Do not alter any existing functionality, data flow, component structure, or content — only colors, typography, spacing, borders, icons, and micro-interactions.
 
 ---
 
