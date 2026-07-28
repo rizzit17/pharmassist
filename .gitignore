@@ -1,0 +1,71 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Node
+node_modules/
+dist/
+build/
+*.local
+.npm
+
+# Uploads (runtime-generated)
+backend/uploads/
+
+# Docker volumes
+pgdata/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Alembic (keep migrations, ignore runtime data)
+# backend/app/db/alembic/versions/*.pyc handled by __pycache__ rule above
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+aivoa.db
+
+# Environment & credentials
+.env
+.env.local
+.env.development
+.env.production
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,107 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: pharmassist_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pharmassist}
+      POSTGRES_USER: ${POSTGRES_USER:-pharmassist}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pharmassist_secret}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pharmassist} -d ${POSTGRES_DB:-pharmassist}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pharmassist_net
+
+  # ── Backend (FastAPI) ───────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pharmassist_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pharmassist}:${POSTGRES_PASSWORD:-pharmassist_secret}@postgres:5432/${POSTGRES_DB:-pharmassist}
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      JWT_SECRET: ${JWT_SECRET:-dev_secret_change_in_production}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-1440}
+      AUTH_REQUIRED: ${AUTH_REQUIRED:-True}
+      USE_LARGE_MODEL: ${USE_LARGE_MODEL:-False}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      UPLOAD_DIR: ${UPLOAD_DIR:-uploads}
+      MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-10}
+      GROQ_TIMEOUT_SECONDS: ${GROQ_TIMEOUT_SECONDS:-20}
+      GROQ_MAX_RETRIES: ${GROQ_MAX_RETRIES:-2}
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-gemma2-9b-it}
+      SECONDARY_MODEL: ${SECONDARY_MODEL:-llama-3.3-70b-versatile}
+    volumes:
+      - ./backend:/app
+      - uploads_data:/app/uploads
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "
+        echo 'Waiting for DB...' &&
+        python -m alembic upgrade head &&
+        python seed.py &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+    networks:
+      - pharmassist_net
+
+  # ── Frontend (React/Vite) ───────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pharmassist_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - pharmassist_net
+
+  # ── pgAdmin (optional, remove if not needed) ────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pharmassist_pgadmin
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@pharmassist.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    networks:
+      - pharmassist_net
+    profiles:
+      - debug
+
+volumes:
+  pgdata:
+  uploads_data:
+
+networks:
+  pharmassist_net:
+    driver: bridge

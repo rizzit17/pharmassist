@@ -1,0 +1,168 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base styles ─────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 dark:bg-dark-bg dark:text-dark-text-bright;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-gray-900 dark:text-dark-text-bright;
+  }
+
+  input, textarea, select {
+    @apply font-sans;
+  }
+}
+
+/* ── Component utilities ─────────────────────────────────────────── */
+@layer components {
+  /* Card */
+  .card {
+    @apply bg-white dark:bg-dark-surface rounded-xl shadow-card border border-gray-100 dark:border-dark-border;
+  }
+
+  /* Form field with AI highlight */
+  .field-highlighted {
+    @apply transition-all duration-300;
+    animation: fieldHighlight 3s ease-out forwards;
+  }
+
+  /* Status pills */
+  .pill-pending {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200;
+  }
+
+  .pill-ready {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200;
+  }
+
+  .pill-committed {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200;
+  }
+
+  /* Severity badges */
+  .severity-critical {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
+  }
+
+  .severity-major {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300;
+  }
+
+  .severity-minor {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300;
+  }
+
+  /* Sidebar nav link */
+  .nav-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors dark:text-dark-text dark:hover:text-dark-text-bright dark:hover:bg-dark-border;
+  }
+
+  .nav-link-active {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-primary-700 bg-primary-50 dark:text-dark-accent dark:bg-primary-950/50;
+  }
+
+  /* Awaiting AI placeholder text */
+  .awaiting-ai {
+    @apply italic text-gray-400 dark:text-gray-500;
+  }
+
+  /* Section header */
+  .section-header {
+    @apply text-xs font-semibold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-3;
+  }
+
+  /* Skeleton loader */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-dark-border rounded;
+  }
+
+  /* Typing indicator dots */
+  .typing-dot {
+    @apply inline-block w-2 h-2 rounded-full bg-gray-400;
+    animation: pulseDot 1.4s ease-in-out infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+}
+
+/* ── Custom scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-dark-border rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
+}
+
+/* ── AI Risk Assessment Card ────────────────────────────────────── */
+.risk-assessment-card {
+  @apply bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-primary-950/40 dark:to-violet-950/40 border border-indigo-100 dark:border-primary-900/50 rounded-xl p-4;
+}
+
+/* ── Progress bar ────────────────────────────────────────────────── */
+.progress-bar-fill {
+  @apply h-full bg-gradient-to-r from-primary-500 to-violet-500 rounded-full transition-all duration-500;
+  animation: progressPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* ── Chat bubbles ────────────────────────────────────────────────── */
+.chat-bubble-ai {
+  @apply bg-white dark:bg-dark-surface border border-gray-100 dark:border-dark-border rounded-2xl rounded-tl-sm shadow-sm;
+}
+
+.chat-bubble-user {
+  @apply bg-gradient-to-br from-primary-600 to-violet-600 text-white rounded-2xl rounded-tr-sm shadow-sm;
+}
+
+/* ── Field highlight animation (Framer Motion fallback) ─────────── */
+@keyframes fieldHighlight {
+  0% {
+    background-color: #d1fae5;
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  }
+  60% {
+    background-color: #d1fae5;
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+  }
+  100% {
+    background-color: transparent;
+    border-color: inherit;
+    box-shadow: none;
+  }
+}
