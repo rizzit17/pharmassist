@@ -145,7 +145,7 @@ export default function LoginPage() {
           </Button>
 
           <p className="text-center text-xs text-gray-400 mt-6">
-            Demo: demo@aivoa.com · Powered by LangGraph + Groq
+            Demo Credentials: <span className="font-mono text-gray-600 dark:text-gray-300">demo@aivoa.com</span> / <span className="font-mono text-gray-600 dark:text-gray-300">demo1234</span>
           </p>
         </div>
       </motion.div>
