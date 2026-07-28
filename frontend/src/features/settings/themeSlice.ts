@@ -4,14 +4,22 @@ interface ThemeState {
   isDark: boolean
 }
 
-const saved = typeof window !== 'undefined' ? localStorage.getItem('aivoa_theme') : null
+// Clear legacy key to ensure Light Mode default on existing sessions
+if (typeof window !== 'undefined') {
+  if (!localStorage.getItem('aivoa_theme_v2')) {
+    localStorage.removeItem('aivoa_theme')
+    localStorage.setItem('aivoa_theme_v2', 'light')
+  }
+}
+
+const saved = typeof window !== 'undefined' ? localStorage.getItem('aivoa_theme_v2') : 'light'
 const initialDark = saved === 'dark'
 
 const initialState: ThemeState = {
   isDark: initialDark,
 }
 
-// Apply immediately on load
+// Apply immediately on script execution
 if (typeof document !== 'undefined') {
   if (initialDark) {
     document.documentElement.classList.add('dark')
@@ -28,10 +36,10 @@ const themeSlice = createSlice({
       state.isDark = !state.isDark
       if (state.isDark) {
         document.documentElement.classList.add('dark')
-        localStorage.setItem('aivoa_theme', 'dark')
+        localStorage.setItem('aivoa_theme_v2', 'dark')
       } else {
         document.documentElement.classList.remove('dark')
-        localStorage.setItem('aivoa_theme', 'light')
+        localStorage.setItem('aivoa_theme_v2', 'light')
       }
     },
     setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
@@ -41,7 +49,7 @@ const themeSlice = createSlice({
       } else {
         document.documentElement.classList.remove('dark')
       }
-      localStorage.setItem('aivoa_theme', action.payload)
+      localStorage.setItem('aivoa_theme_v2', action.payload)
     },
   },
 })
