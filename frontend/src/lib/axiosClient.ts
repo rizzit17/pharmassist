@@ -13,8 +13,9 @@ const axiosClient = axios.create({
 // Request interceptor: attach JWT token and model routing headers
 axiosClient.interceptors.request.use(
   (config) => {
+    const isAuthRoute = config.url?.includes('/auth/login') || config.url?.includes('/auth/demo')
     const token = localStorage.getItem('aivoa_token')
-    if (token) {
+    if (token && !isAuthRoute) {
       config.headers.Authorization = `Bearer ${token}`
     }
     const primaryModel = localStorage.getItem('aivoa_primary_model')
@@ -37,7 +38,9 @@ axiosClient.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('aivoa_token')
       localStorage.removeItem('aivoa_user')
-      window.location.href = '/login'
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
     }
 
     const message =
