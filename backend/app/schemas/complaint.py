@@ -23,6 +23,8 @@ class ComplaintBase(BaseModel):
 class ComplaintCreate(ComplaintBase):
     """Schema for creating a new complaint (manual or AI-populated)."""
     status: Optional[str] = "draft"
+    risk_assessment: Optional[dict] = None
+    ai_analysis: Optional[dict] = None
 
 
 class ComplaintUpdate(ComplaintBase):

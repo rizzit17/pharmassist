@@ -272,6 +272,7 @@ export default function NewComplaintPage() {
       const complaint = await complaintsApi.create({
         ...draft,
         status: 'committed',
+        risk_assessment: riskAssessment || undefined,
       })
       dispatch(markCommitted())
       navigate(`/complaints/${complaint.id}`)

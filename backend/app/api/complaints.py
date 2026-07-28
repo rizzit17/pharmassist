@@ -38,7 +38,23 @@ async def create_complaint(
 ):
     """Create a new complaint (from AI Copilot commit or manual entry)."""
     service = ComplaintService(db)
-    return await service.create_complaint(data, created_by=getattr(current_user, "id", None))
+    ai_data = data.risk_assessment or data.ai_analysis
+    if not ai_data:
+        cat = (data.complaint_category or "").lower()
+        desc = (data.complaint_description or "").lower()
+        if "contamination" in cat or "contamination" in desc or "sterility" in cat or "toxin" in desc:
+            sev = "Critical"
+        elif "short fill" in cat or "mislabeling" in cat or "label" in desc or "packing" in desc or "defect" in cat or "fill" in desc:
+            sev = "Major"
+        else:
+            sev = "Minor"
+        ai_data = {
+            "severity": sev,
+            "suggested_next_action": f"Initiate QA triage for {data.complaint_category or 'customer complaint'}",
+            "initial_risk_assessment": f"Automatically assessed as {sev} severity based on defect classification.",
+            "regulatory_reportable": (sev == "Critical"),
+        }
+    return await service.create_complaint(data, created_by=getattr(current_user, "id", None), ai_analysis_data=ai_data)
 
 
 @router.get("/{complaint_id}", response_model=ComplaintOut)
