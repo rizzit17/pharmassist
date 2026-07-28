@@ -46,6 +46,18 @@ export default function AppShell() {
         } catch (err) {
           console.error('Auto-authentication failed', err)
         }
+      } else {
+        try {
+          await authApi.me()
+        } catch (err) {
+          // Stale or invalid token (e.g. JWT secret key updated) -> self-heal with fresh demo token
+          try {
+            const res = await authApi.demo()
+            dispatch(setCredentials({ user: res.user, token: res.token.access_token }))
+          } catch (e) {
+            console.error('Re-authentication failed', e)
+          }
+        }
       }
     }
     ensureAuth()
