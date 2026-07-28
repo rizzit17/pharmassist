@@ -1,21 +1,21 @@
-# 🧪 AIVOA — AI-Powered Customer Complaint Management System (QMS)
+# AIVOA: AI-Powered Customer Complaint Management System (QMS)
 
 > **AIVOA Internship Assessment Task**  
 > An enterprise-grade, AI-driven Quality Management System (QMS) module designed for Pharmaceutical API (Active Pharmaceutical Ingredients) & FDF (Finished Dosage Form) Manufacturers. Features an interactive **LangGraph Multi-Node AI Copilot** that extracts, validates, risk-assesses, and deduplicates customer complaints in compliance with GxP and regulatory standards (USFDA / MHRA / WHO-GMP).
 
 ---
 
-## 🌟 Key Highlights & Screenshots
+## Key Highlights & Features
 
-* **⚡ Branded Initialization**: 5-second branded splash loading screen with session-gating.
-* **☀️ Enterprise Light Mode First**: Light-mode-first design system with dark navy sidebar chrome (`#0F0E17`) and dark mode toggle.
-* **🤖 LangGraph AI Copilot**: Automated complaint extraction, defect classification, missing-field identification, and duplicate detection.
-* **🔴 Amber/Red/Green Traffic Light Risk Matrix**: Standardized severity tokens (**Critical** = Red, **Major** = Amber, **Minor** = Green) synced across donut charts, complaint tables, and risk assessment cards.
-* **📜 21 CFR Part 11 Audit Trail**: Immutable field-level change history tracking human vs. AI actions.
+* **Branded Initialization**: 5-second branded splash loading screen with session-gating.
+* **Enterprise Light Mode First**: Light-mode-first design system with dark navy sidebar chrome (`#0F0E17`) and dark mode toggle.
+* **LangGraph AI Copilot**: Automated complaint extraction, defect classification, missing-field identification, and duplicate detection.
+* **Amber/Red/Green Traffic Light Risk Matrix**: Standardized severity tokens (**Critical** = Red, **Major** = Amber, **Minor** = Green) synced across donut charts, complaint tables, and risk assessment cards.
+* **21 CFR Part 11 Audit Trail**: Immutable field-level change history tracking human vs. AI actions.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## Architecture & Technology Stack
 
 ### **Frontend System**
 * **Framework**: React 18 + Vite (TypeScript)
@@ -36,7 +36,7 @@
 
 ---
 
-## 💡 Core Functionalities
+## Core Functionalities
 
 ### 1. **Automated Complaint Extraction & Triage**
 - Upload complaint documents (`.pdf`, `.eml`, `.txt`) or paste raw unstructured text into the **AIVOA Copilot**.
@@ -54,7 +54,7 @@
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 pharmassist/
@@ -84,7 +84,7 @@ pharmassist/
 
 ---
 
-## 🛠️ Quickstart & Local Setup
+## Quickstart & Local Setup
 
 ### **Prerequisites**
 * Node.js (v18+) & npm
@@ -135,14 +135,14 @@ npm run dev
 
 ---
 
-## 🔒 Authentication & Demo Access
+## Authentication & Demo Access
 
 - Click **"Continue as Demo User"** on the login screen to sign in instantly with pre-seeded QA Officer credentials.
 - Pre-loaded mock datasets demonstrate real-time complaint analytics, audit trails, and risk donut charts out of the box.
 
 ---
 
-## 📑 Compliance & Standards
+## Compliance & Standards
 
 Designed with reference to:
 - **USFDA 21 CFR Part 211** (Current Good Manufacturing Practice for Finished Pharmaceuticals)
@@ -151,6 +151,6 @@ Designed with reference to:
 
 ---
 
-<p center>
+<p align="center">
 Developed for the <b>AIVOA Technical Internship Assessment</b>.
 </p>
