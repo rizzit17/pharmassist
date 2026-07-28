@@ -56,8 +56,8 @@ export default function AppShell() {
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100 dark:border-dark-border">
-          <div className="flex items-center justify-center w-9 h-9 bg-gradient-to-br from-primary-600 to-violet-600 rounded-xl shadow-sm">
-            <FlaskConical className="w-5 h-5 text-white" />
+          <div className="icon-chip icon-chip-accent">
+            <FlaskConical className="w-5 h-5" />
           </div>
           <div>
             <p className="font-bold text-sm text-gray-900 dark:text-dark-text-bright">AIVOA</p>

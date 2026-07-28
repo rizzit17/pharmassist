@@ -113,7 +113,7 @@ export default function ComplaintsPage() {
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{c.customer_name || '-'}</td>
                         <td className="px-4 py-3">
                           <div className="text-gray-800 dark:text-gray-200">{c.product_name || '-'}</div>
-                          {c.batch_lot_number && <div className="text-xs text-gray-400 font-mono mt-0.5">{c.batch_lot_number}</div>}
+                          {c.batch_lot_number && <div className="text-xs text-gray-500 font-mono-data mt-0.5">{c.batch_lot_number}</div>}
                         </td>
                         <td className="px-4 py-3 text-gray-600 dark:text-gray-400 max-w-36 truncate">{c.complaint_category || '-'}</td>
                         <td className="px-4 py-3">

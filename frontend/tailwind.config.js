@@ -9,29 +9,44 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'monospace'],
       },
       colors: {
-        // Primary accent: Indigo/Violet
+        // AIVOA Brand Primary Accent
         primary: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+          50: '#F1F0FE',
+          100: '#E8E6FD',
+          200: '#D1CDFA',
+          300: '#A9A2F6',
+          400: '#8177F1',
+          500: '#6C5CE7',
+          600: '#5B4FE9',
+          700: '#473BC5',
+          800: '#382FA1',
+          900: '#2F2783',
+          950: '#1B1652',
         },
-        // Status colors
+        // Semantic Traffic-Light System
+        status: {
+          successBg: '#E9F9EE',
+          successText: '#1C9A4B',
+          successIcon: '#22C55E',
+          warningBg: '#FEF6E7',
+          warningText: '#B7791F',
+          warningIcon: '#F5A524',
+          criticalBg: '#FDEDEC',
+          criticalText: '#C0392B',
+          criticalIcon: '#E74C3C',
+          infoBg: '#EBF3FF',
+          infoText: '#2563EB',
+          infoIcon: '#3B82F6',
+        },
         severity: {
-          critical: '#ef4444',
-          major: '#f97316',
-          minor: '#eab308',
+          critical: '#C0392B',
+          major: '#B7791F',
+          minor: '#2563EB',
         },
-        // Tokyo Night dark mode palette
+        // Dark mode palette
         dark: {
           bg: '#1a1b26',
           surface: '#24283b',
@@ -61,8 +76,8 @@ export default {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         fieldHighlight: {
-          '0%': { backgroundColor: '#d1fae5', borderColor: '#10b981' },
-          '50%': { backgroundColor: '#d1fae5', borderColor: '#10b981' },
+          '0%': { backgroundColor: '#E9F9EE', borderColor: '#22C55E' },
+          '50%': { backgroundColor: '#E9F9EE', borderColor: '#22C55E' },
           '100%': { backgroundColor: 'transparent', borderColor: 'transparent' },
         },
         pulseDot: {
@@ -71,9 +86,9 @@ export default {
         },
       },
       boxShadow: {
-        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
-        'card-md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
-        'card-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+        'card': 'none',
+        'card-md': '0 1px 3px 0 rgba(15, 14, 23, 0.05)',
+        'card-lg': '0 4px 6px -1px rgba(15, 14, 23, 0.08)',
       },
     },
   },

@@ -431,8 +431,10 @@ export default function NewComplaintPage() {
                 className="risk-assessment-card"
               >
                 <div className="flex items-center gap-2 mb-4">
-                  <Shield className="w-4 h-4 text-primary-600" />
-                  <span className="text-xs font-bold tracking-widest uppercase text-primary-700 dark:text-dark-accent">
+                  <div className="icon-chip icon-chip-accent">
+                    <Shield className="w-4 h-4" />
+                  </div>
+                  <span className="eyebrow-label">
                     AI Copilot Risk Assessment
                   </span>
                   <span className={cn(
@@ -513,13 +515,13 @@ export default function NewComplaintPage() {
 
         {/* RIGHT PANE - AIVOA Copilot */}
         <div className={cn(
-          'flex flex-col w-full lg:w-[45%] bg-gray-50 dark:bg-dark-bg overflow-hidden',
+          'flex flex-col w-full lg:w-[45%] bg-[#F1F0FE] dark:bg-dark-bg overflow-hidden',
           activeTab !== 'copilot' && 'hidden lg:flex'
         )}>
           {/* Chat header */}
           <div className="px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-violet-500 flex items-center justify-center">
-              <FlaskConical className="w-4 h-4 text-white" />
+            <div className="icon-chip icon-chip-accent">
+              <FlaskConical className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-sm font-bold text-gray-900 dark:text-white">AIVOA Copilot</h2>
@@ -597,7 +599,7 @@ export default function NewComplaintPage() {
               </button>
             </div>
 
-            <p className="text-center text-xs text-gray-300 dark:text-gray-600 mt-2 tracking-wider">
+            <p className="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 mt-2 tracking-widest uppercase">
               POWERED BY LANGGRAPH
             </p>
           </div>
