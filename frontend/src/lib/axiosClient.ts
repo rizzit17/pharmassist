@@ -1,6 +1,22 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL
+  if (envUrl && envUrl.startsWith('http')) {
+    return envUrl
+  }
+  // When running on Vercel or remote host, default directly to live Render backend
+  if (
+    typeof window !== 'undefined' &&
+    !window.location.hostname.includes('localhost') &&
+    !window.location.hostname.includes('127.0.0.1')
+  ) {
+    return 'https://aivoa-backend-5t5q.onrender.com/api/v1'
+  }
+  return '/api/v1'
+}
+
+const BASE_URL = getBaseUrl()
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
