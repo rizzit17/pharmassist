@@ -69,3 +69,7 @@ aivoa.db
 # Logs
 *.log
 logs/
+
+# Submission Archives
+*.zip
+AIVOA_PharmAssist_Submission.zip
