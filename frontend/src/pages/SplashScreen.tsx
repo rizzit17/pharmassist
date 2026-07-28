@@ -33,8 +33,8 @@ export default function SplashScreen({ onFinish }: { onFinish?: () => void }) {
         className="relative z-10 flex flex-col items-center text-center space-y-6 max-w-sm"
       >
         {/* Brand Icon Mark */}
-        <div className="w-20 h-20 rounded-2xl bg-[#E8E6FD] dark:bg-primary-950/50 border border-[#5B4FE9]/20 flex items-center justify-center shadow-lg shadow-[#5B4FE9]/10">
-          <FlaskConical className="w-10 h-10 text-[#5B4FE9]" />
+        <div className="w-20 h-20 rounded-2xl bg-white dark:bg-dark-surface border border-gray-100 dark:border-dark-border flex items-center justify-center shadow-lg shadow-[#5B4FE9]/10 p-3">
+          <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
         </div>
 
         {/* Branding & Wordmark */}

@@ -521,8 +521,8 @@ export default function NewComplaintPage() {
         )}>
           {/* Chat header */}
           <div className="px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border flex items-center gap-3">
-            <div className="icon-chip icon-chip-accent">
-              <FlaskConical className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border p-1 flex items-center justify-center shrink-0">
+              <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <h2 className="text-sm font-bold text-gray-900 dark:text-white">AIVOA Copilot</h2>

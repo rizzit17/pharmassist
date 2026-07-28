@@ -63,8 +63,8 @@ export default function LoginPage() {
         <div className="bg-white/95 dark:bg-dark-surface backdrop-blur-xl rounded-2xl shadow-2xl p-8">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-primary-600 to-violet-600 rounded-2xl shadow-lg mb-4">
-              <FlaskConical className="w-7 h-7 text-white" />
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border rounded-2xl p-2.5 shadow-md mb-4">
+              <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">AIVOA</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">

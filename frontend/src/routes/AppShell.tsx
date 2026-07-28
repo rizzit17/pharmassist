@@ -56,12 +56,12 @@ export default function AppShell() {
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-[#262438]">
-          <div className="icon-chip icon-chip-accent">
-            <FlaskConical className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl bg-white/10 p-1.5 flex items-center justify-center shrink-0">
+            <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
           </div>
           <div>
-            <p className="font-bold text-sm text-white">AIVOA</p>
-            <p className="text-xs text-gray-400">QMS Copilot</p>
+            <h1 className="font-extrabold text-[#FFFFFF] text-base tracking-tight leading-none">AIVOA</h1>
+            <p className="text-[10px] text-gray-400 font-medium tracking-wide mt-1">QMS Copilot</p>
           </div>
           <button
             className="ml-auto lg:hidden text-gray-400 hover:text-white"
