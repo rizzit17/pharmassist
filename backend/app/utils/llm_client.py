@@ -15,15 +15,31 @@ from langchain_groq import ChatGroq
 
 from app.core.config import settings
 
+import contextvars
+
 logger = logging.getLogger(__name__)
+
+active_primary_model_var: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar("active_primary_model", default=None)
+active_secondary_model_var: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar("active_secondary_model", default=None)
 
 
 def get_llm(node_name: str = "default", temperature: float = 0.1) -> ChatGroq:
     """
     Return a configured ChatGroq instance for the given node.
-    Model is selected based on node name + use_large_model config flag.
+    Model is selected based on request headers / user settings or fallback defaults.
     """
-    model = settings.model_for_node(node_name)
+    custom_primary = active_primary_model_var.get()
+    custom_secondary = active_secondary_model_var.get()
+
+    if settings.use_large_model and node_name in settings.large_model_nodes:
+        model = custom_secondary or settings.secondary_model
+    else:
+        model = custom_primary or settings.primary_model
+
+    # Safeguard against any discontinued/decommissioned Groq models
+    if "gemma" in model.lower():
+        model = "llama-3.1-8b-instant"
+
     return ChatGroq(
         model=model,
         api_key=settings.groq_api_key,

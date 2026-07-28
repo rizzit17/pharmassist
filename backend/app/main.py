@@ -49,6 +49,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ── Dynamic Model Routing Middleware ──────────────────────────────
+from app.utils.llm_client import active_primary_model_var, active_secondary_model_var
+
+@app.middleware("http")
+async def model_override_middleware(request, call_next):
+    primary_hdr = request.headers.get("x-primary-model")
+    secondary_hdr = request.headers.get("x-secondary-model")
+
+    tok1 = active_primary_model_var.set(primary_hdr) if primary_hdr else None
+    tok2 = active_secondary_model_var.set(secondary_hdr) if secondary_hdr else None
+    try:
+        response = await call_next(request)
+        return response
+    finally:
+        if tok1:
+            active_primary_model_var.reset(tok1)
+        if tok2:
+            active_secondary_model_var.reset(tok2)
+
+
 
 # ── Global exception handlers ─────────────────────────────────────
 @app.exception_handler(Exception)

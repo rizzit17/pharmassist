@@ -400,7 +400,7 @@ async def seed():
                     "complaint_category": 0.92,
                     "severity": 0.88,
                 },
-                model_used="gemma2-9b-it",
+                model_used="llama-3.1-8b-instant",
             )
             session.add(analysis)
 

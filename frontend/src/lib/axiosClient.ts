@@ -10,12 +10,20 @@ const axiosClient = axios.create({
   },
 })
 
-// Request interceptor: attach JWT token
+// Request interceptor: attach JWT token and model routing headers
 axiosClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('aivoa_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+    }
+    const primaryModel = localStorage.getItem('aivoa_primary_model')
+    const secondaryModel = localStorage.getItem('aivoa_secondary_model')
+    if (primaryModel) {
+      config.headers['X-Primary-Model'] = primaryModel
+    }
+    if (secondaryModel) {
+      config.headers['X-Secondary-Model'] = secondaryModel
     }
     return config
   },
