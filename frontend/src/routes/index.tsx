@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from '@/app/hooks'
 import AppShell from './AppShell'
+import SplashScreen from '@/pages/SplashScreen'
 import LoginPage from '@/pages/LoginPage'
 import DashboardPage from '@/pages/DashboardPage'
 import ComplaintsPage from '@/pages/ComplaintsPage'
@@ -17,6 +18,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function AppRouter() {
+  const [showSplash, setShowSplash] = useState(() => {
+    return !sessionStorage.getItem('hasSeenSplash')
+  })
+
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />
+  }
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
