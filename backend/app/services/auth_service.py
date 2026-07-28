@@ -33,7 +33,12 @@ class AuthService:
         """Return auth response for the seeded demo user without password verification."""
         user = await self.user_repo.get_by_email("demo@aivoa.com")
         if not user:
-            raise ValueError("Demo user not found. Run seed.py first.")
+            user = await self.user_repo.create(
+                email="demo@aivoa.com",
+                name="Demo QA Officer",
+                hashed_password=hash_password("demo1234"),
+                role="qa_officer",
+            )
 
         token = create_access_token(subject=user.email)
         return AuthResponse(

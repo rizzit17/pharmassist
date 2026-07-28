@@ -22,6 +22,12 @@ async def lifespan(app: FastAPI):
     logger.info("AIVOA CMS starting up...")
     await create_db_tables()
     logger.info("Database tables verified.")
+    try:
+        from seed import seed
+        await seed()
+        logger.info("Database seed check completed.")
+    except Exception as e:
+        logger.warning(f"Auto-seed warning: {e}")
     yield
     logger.info("AIVOA CMS shutting down.")
 
