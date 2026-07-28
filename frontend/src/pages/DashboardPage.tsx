@@ -17,7 +17,7 @@ import { getStatusColor, getStatusLabel, getSeverityColor, formatDate } from '@/
 const SEVERITY_COLORS = {
   Critical: '#C0392B',
   Major: '#B7791F',
-  Minor: '#2563EB',
+  Minor: '#1C9A4B',
   Unknown: '#94a3b8',
 }
 

@@ -50,7 +50,7 @@ export const getSeverityColor = (severity?: string | null): string => {
   switch (severity) {
     case 'Critical': return 'text-[#C0392B] bg-[#FDEDEC] border border-[#E74C3C]/30'
     case 'Major': return 'text-[#B7791F] bg-[#FEF6E7] border border-[#F5A524]/30'
-    case 'Minor': return 'text-[#2563EB] bg-[#EBF3FF] border border-[#3B82F6]/30'
+    case 'Minor': return 'text-[#1C9A4B] bg-[#E9F9EE] border border-[#22C55E]/30'
     default: return 'text-gray-500 bg-gray-100'
   }
 }
@@ -59,7 +59,7 @@ export const getSeverityDot = (severity?: string | null): string => {
   switch (severity) {
     case 'Critical': return 'bg-[#E74C3C]'
     case 'Major': return 'bg-[#F5A524]'
-    case 'Minor': return 'bg-[#3B82F6]'
+    case 'Minor': return 'bg-[#22C55E]'
     default: return 'bg-gray-400'
   }
 }
