@@ -148,7 +148,6 @@ export default function SettingsPage() {
                 className="font-mono text-xs bg-white dark:bg-dark-surface border border-gray-300 dark:border-dark-border text-primary-600 dark:text-dark-accent px-3 py-1.5 rounded-md focus:ring-2 focus:ring-primary-500 outline-none"
               >
                 <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Fastest)</option>
-                <option value="gemma2-9b-it">gemma2-9b-it (Google Gemma)</option>
                 <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (High Precision)</option>
                 <option value="mixtral-8x7b-32768">mixtral-8x7b-32768 (MoE Architecture)</option>
               </select>
