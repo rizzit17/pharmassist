@@ -41,6 +41,8 @@ export interface Complaint {
   created_at: string
   updated_at: string
   ai_analyses?: AIAnalysis[]
+  risk_assessment?: Record<string, any>
+  ai_analysis?: Record<string, any>
 }
 
 export type ComplaintStatus =
