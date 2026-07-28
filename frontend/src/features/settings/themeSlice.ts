@@ -4,9 +4,7 @@ interface ThemeState {
   isDark: boolean
 }
 
-const saved = localStorage.getItem('aivoa_theme')
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-const initialDark = saved ? saved === 'dark' : prefersDark
+const initialDark = saved === 'dark'
 
 const initialState: ThemeState = {
   isDark: initialDark,

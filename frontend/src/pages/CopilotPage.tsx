@@ -86,12 +86,12 @@ export default function CopilotPage() {
       {/* Header card */}
       <div className="card p-4 mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-violet-600 flex items-center justify-center">
-            <FlaskConical className="w-5 h-5 text-white" />
+          <div className="icon-chip icon-chip-accent">
+            <FlaskConical className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-gray-900 dark:text-white">Full-Screen AI Copilot</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Natural language complaint extraction & QA assistant</p>
+            <h1 className="text-lg font-extrabold tracking-tight text-[#0F0E17] dark:text-white">Full-Screen AI Copilot</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Natural language complaint extraction &amp; QA assistant</p>
           </div>
         </div>
 

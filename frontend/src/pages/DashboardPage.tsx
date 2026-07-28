@@ -15,13 +15,13 @@ import { cn } from '@/lib/utils'
 import { getStatusColor, getStatusLabel, getSeverityColor, formatDate } from '@/lib/formatters'
 
 const SEVERITY_COLORS = {
-  Critical: '#ef4444',
-  Major: '#f97316',
-  Minor: '#eab308',
+  Critical: '#C0392B',
+  Major: '#B7791F',
+  Minor: '#2563EB',
   Unknown: '#94a3b8',
 }
 
-function KPICard({ title, value, subtitle, icon: Icon, color, trend }: any) {
+function KPICard({ title, value, subtitle, icon: Icon, chipClass, trend }: any) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -30,22 +30,22 @@ function KPICard({ title, value, subtitle, icon: Icon, color, trend }: any) {
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{value ?? '-'}</p>
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{title}</p>
+          <p className="text-3xl font-extrabold text-[#0F0E17] dark:text-white mt-1.5">{value ?? '-'}</p>
           {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
         </div>
-        <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', color)}>
-          <Icon className="w-5 h-5 text-white" />
+        <div className={cn('icon-chip', chipClass)}>
+          <Icon className="w-5 h-5" />
         </div>
       </div>
       {trend !== undefined && (
         <div className="flex items-center gap-1 mt-3">
           {trend > 0 ? (
-            <ArrowUpRight className="w-3.5 h-3.5 text-red-500" />
+            <ArrowUpRight className="w-3.5 h-3.5 text-blue-600" />
           ) : (
-            <ArrowDownRight className="w-3.5 h-3.5 text-emerald-500" />
+            <ArrowDownRight className="w-3.5 h-3.5 text-blue-600" />
           )}
-          <span className={cn('text-xs font-medium', trend > 0 ? 'text-red-600' : 'text-emerald-600')}>
+          <span className="text-xs font-semibold text-blue-600">
             {Math.abs(trend)}% vs last month
           </span>
         </div>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#0F0E17] dark:text-white">Dashboard</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">QMS Complaint Analytics Overview</p>
         </div>
         <Button
@@ -118,10 +118,10 @@ export default function DashboardPage() {
           ))
         ) : (
           <>
-            <KPICard title="Total Complaints" value={stats?.total_complaints} icon={ClipboardList} color="bg-primary-600" trend={trend} />
-            <KPICard title="Open Complaints" value={stats?.open_complaints} subtitle="Pending resolution" icon={BarChart3} color="bg-amber-500" />
-            <KPICard title="Critical / High Risk" value={stats?.critical_complaints} subtitle="Requires immediate action" icon={AlertTriangle} color="bg-red-500" />
-            <KPICard title="This Month" value={stats?.complaints_this_month} subtitle={`${stats?.complaints_last_month} last month`} icon={TrendingUp} color="bg-violet-600" />
+            <KPICard title="Total Complaints" value={stats?.total_complaints} icon={ClipboardList} chipClass="icon-chip-accent" trend={trend} />
+            <KPICard title="Open Complaints" value={stats?.open_complaints} subtitle="Pending resolution" icon={BarChart3} chipClass="icon-chip-warning" />
+            <KPICard title="Critical / High Risk" value={stats?.critical_complaints} subtitle="Requires immediate action" icon={AlertTriangle} chipClass="icon-chip-critical" />
+            <KPICard title="This Month" value={stats?.complaints_this_month} subtitle={`${stats?.complaints_last_month} last month`} icon={TrendingUp} chipClass="icon-chip-success" />
           </>
         )}
       </div>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Severity donut */}
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Severity Distribution</h3>
+          <h3 className="text-sm font-bold text-[#0F0E17] dark:text-white mb-4">Severity Distribution</h3>
           {isLoading ? (
             <Skeleton className="h-48 w-full rounded-lg" />
           ) : charts?.severity_distribution?.length > 0 ? (
@@ -157,7 +157,7 @@ export default function DashboardPage() {
 
         {/* Monthly trend */}
         <div className="card p-5 lg:col-span-2">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Monthly Trend</h3>
+          <h3 className="text-sm font-bold text-[#0F0E17] dark:text-white mb-4">Monthly Trend</h3>
           {isLoading ? (
             <Skeleton className="h-48 w-full rounded-lg" />
           ) : charts?.monthly_trend?.length > 0 ? (
@@ -167,7 +167,7 @@ export default function DashboardPage() {
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#5B4FE9" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -179,15 +179,15 @@ export default function DashboardPage() {
       {/* Recent complaints */}
       <div className="card overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-dark-border flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Recent Complaints</h3>
-          <button onClick={() => navigate('/complaints')} className="text-xs text-primary-600 hover:text-primary-700 font-medium">View all →</button>
+          <h3 className="text-sm font-bold text-[#0F0E17] dark:text-white">Recent Complaints</h3>
+          <button onClick={() => navigate('/complaints')} className="text-xs text-[#5B4FE9] hover:underline font-semibold">View all →</button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-bg">
+              <tr className="border-b border-gray-100 dark:border-dark-border bg-[#FAFAFB] dark:bg-dark-bg">
                 {['Complaint #', 'Product', 'Customer', 'Status', 'Severity', 'Date'].map((h) => (
-                  <th key={h} className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-4 py-3">{h}</th>
+                  <th key={h} className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 px-4 py-3 uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -205,20 +205,20 @@ export default function DashboardPage() {
                     return (
                       <tr
                         key={c.id}
-                        className="hover:bg-gray-50 dark:hover:bg-dark-border/50 cursor-pointer transition-colors"
+                        className="hover:bg-[#FAFAFB] dark:hover:bg-dark-border/50 cursor-pointer transition-colors"
                         onClick={() => navigate(`/complaints/${c.id}`)}
                       >
-                        <td className="px-4 py-3 font-medium text-primary-600 dark:text-dark-accent">{c.complaint_number}</td>
+                        <td className="px-4 py-3 font-semibold text-[#5B4FE9] dark:text-dark-accent">{c.complaint_number}</td>
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{c.product_name || '-'}</td>
                         <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{c.customer_name || '-'}</td>
                         <td className="px-4 py-3">
-                          <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', getStatusColor(c.status))}>
+                          <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-semibold', getStatusColor(c.status))}>
                             {getStatusLabel(c.status)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           {latestAnalysis?.severity ? (
-                            <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', getSeverityColor(latestAnalysis.severity))}>
+                            <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-semibold', getSeverityColor(latestAnalysis.severity))}>
                               {latestAnalysis.severity}
                             </span>
                           ) : '-'}
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center text-gray-400">
                     <ClipboardList className="w-10 h-10 mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">No complaints yet. <button onClick={() => navigate('/complaints/new')} className="text-primary-600 hover:underline">Log the first one →</button></p>
+                    <p className="text-sm">No complaints yet. <button onClick={() => navigate('/complaints/new')} className="text-[#5B4FE9] hover:underline font-semibold">Log the first one →</button></p>
                   </td>
                 </tr>
               )}

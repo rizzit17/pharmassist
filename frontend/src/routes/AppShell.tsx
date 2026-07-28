@@ -50,21 +50,21 @@ export default function AppShell() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-30 w-64 flex flex-col bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border transition-transform duration-300 lg:relative lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-30 w-64 flex flex-col bg-[#0F0E17] text-white border-r border-[#262438] transition-transform duration-300 lg:relative lg:translate-x-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100 dark:border-dark-border">
+        <div className="flex items-center gap-3 px-5 py-5 border-b border-[#262438]">
           <div className="icon-chip icon-chip-accent">
             <FlaskConical className="w-5 h-5" />
           </div>
           <div>
-            <p className="font-bold text-sm text-gray-900 dark:text-dark-text-bright">AIVOA</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">QMS Copilot</p>
+            <p className="font-bold text-sm text-white">AIVOA</p>
+            <p className="text-xs text-gray-400">QMS Copilot</p>
           </div>
           <button
-            className="ml-auto lg:hidden text-gray-400 hover:text-gray-600"
+            className="ml-auto lg:hidden text-gray-400 hover:text-white"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="w-5 h-5" />
@@ -78,7 +78,9 @@ export default function AppShell() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                isActive ? 'nav-link-active' : 'nav-link'
+                isActive
+                  ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-white bg-primary-600'
+                  : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-colors'
               }
               onClick={() => setSidebarOpen(false)}
             >
@@ -89,17 +91,17 @@ export default function AppShell() {
         </nav>
 
         {/* Footer */}
-        <div className="px-3 py-4 border-t border-gray-100 dark:border-dark-border space-y-1">
+        <div className="px-3 py-4 border-t border-[#262438] space-y-1">
           <button
             onClick={() => dispatch(toggleTheme())}
-            className="nav-link w-full"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-colors w-full"
           >
             {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             {isDark ? 'Light Mode' : 'Dark Mode'}
           </button>
           <button
             onClick={() => dispatch(logout())}
-            className="nav-link w-full text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors w-full"
           >
             <LogOut className="w-4 h-4" />
             Sign Out

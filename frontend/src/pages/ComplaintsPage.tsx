@@ -46,7 +46,7 @@ export default function ComplaintsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Complaints</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#0F0E17] dark:text-white">Complaints</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} total records</p>
         </div>
         <Button variant="primary" size="sm" leftIcon={<PlusCircle className="w-4 h-4" />} onClick={() => navigate('/complaints/new')}>
@@ -86,9 +86,9 @@ export default function ComplaintsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-bg">
+              <tr className="border-b border-gray-100 dark:border-dark-border bg-[#FAFAFB] dark:bg-dark-bg">
                 {['Complaint #', 'Customer', 'Product / Batch', 'Category', 'Status', 'Severity', 'Date', 'Actions'].map((h) => (
-                  <th key={h} className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-4 py-3">{h}</th>
+                  <th key={h} className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 px-4 py-3 uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -106,10 +106,10 @@ export default function ComplaintsPage() {
                     return (
                       <tr
                         key={c.id}
-                        className="hover:bg-gray-50 dark:hover:bg-dark-border/50 cursor-pointer transition-colors"
+                        className="hover:bg-[#FAFAFB] dark:hover:bg-dark-border/50 cursor-pointer transition-colors"
                         onClick={() => navigate(`/complaints/${c.id}`)}
                       >
-                        <td className="px-4 py-3 font-medium text-primary-600 dark:text-dark-accent whitespace-nowrap">{c.complaint_number}</td>
+                        <td className="px-4 py-3 font-semibold text-[#5B4FE9] dark:text-dark-accent whitespace-nowrap">{c.complaint_number}</td>
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{c.customer_name || '-'}</td>
                         <td className="px-4 py-3">
                           <div className="text-gray-800 dark:text-gray-200">{c.product_name || '-'}</div>
@@ -117,13 +117,13 @@ export default function ComplaintsPage() {
                         </td>
                         <td className="px-4 py-3 text-gray-600 dark:text-gray-400 max-w-36 truncate">{c.complaint_category || '-'}</td>
                         <td className="px-4 py-3">
-                          <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium whitespace-nowrap', getStatusColor(c.status))}>
+                          <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-semibold whitespace-nowrap', getStatusColor(c.status))}>
                             {getStatusLabel(c.status)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           {latestAnalysis?.severity ? (
-                            <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', getSeverityColor(latestAnalysis.severity))}>
+                            <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-semibold', getSeverityColor(latestAnalysis.severity))}>
                               {latestAnalysis.severity}
                             </span>
                           ) : '-'}
@@ -142,7 +142,7 @@ export default function ComplaintsPage() {
                                 }
                               }
                             }}
-                            className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                            className="p-1.5 rounded-lg text-[#C0392B] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                             title="Delete Complaint"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -156,7 +156,7 @@ export default function ComplaintsPage() {
                   <td colSpan={8} className="px-4 py-16 text-center">
                     <ClipboardList className="w-12 h-12 mx-auto mb-3 text-gray-200 dark:text-gray-700" />
                     <p className="text-gray-500 text-sm font-medium">No complaints found</p>
-                    <p className="text-gray-400 text-xs mt-1">Try adjusting your filters or <button onClick={() => navigate('/complaints/new')} className="text-primary-600 hover:underline">log a new complaint</button></p>
+                    <p className="text-gray-400 text-xs mt-1">Try adjusting your filters or <button onClick={() => navigate('/complaints/new')} className="text-[#5B4FE9] hover:underline font-semibold">log a new complaint</button></p>
                   </td>
                 </tr>
               )}
