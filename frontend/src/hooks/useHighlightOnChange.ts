@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 /**
- * useHighlightOnChange — returns whether a field is currently highlighted (recently updated by AI).
+ * useHighlightOnChange - returns whether a field is currently highlighted (recently updated by AI).
  * @param fieldName - the field name to check
  * @param updatedFields - list of fields updated in the last AI response
  * @param durationMs - how long to show the highlight (default 3000ms)

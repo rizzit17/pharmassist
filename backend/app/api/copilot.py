@@ -1,4 +1,4 @@
-"""Copilot / AI API router — chat, upload, risk-assessment, summary, history."""
+"""Copilot / AI API router - chat, upload, risk-assessment, summary, history."""
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 from sqlalchemy.ext.asyncio import AsyncSession

@@ -310,14 +310,14 @@ export default function NewComplaintPage() {
                 : 'text-gray-500 hover:text-gray-700'
             )}
           >
-            {tab === 'form' ? '📋 Form' : '🤖 Copilot'}
+            {tab === 'form' ? 'Form' : 'Copilot'}
           </button>
         ))}
       </div>
 
       {/* Two-pane layout */}
       <div className="flex-1 flex overflow-hidden">
-        {/* LEFT PANE — Complaint Form */}
+        {/* LEFT PANE - Complaint Form */}
         <div className={cn(
           'flex flex-col w-full lg:w-[55%] border-r border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface overflow-y-auto',
           activeTab !== 'form' && 'hidden lg:flex'
@@ -347,7 +347,7 @@ export default function NewComplaintPage() {
                   <p className="text-sm font-medium text-amber-800">Possible duplicate detected</p>
                   {duplicateWarning.candidates?.map((c) => (
                     <p key={c.complaint_id} className="text-xs text-amber-700 mt-1">
-                      {c.complaint_number} — {(c.similarity_score * 100).toFixed(0)}% similar
+                      {c.complaint_number} - {(c.similarity_score * 100).toFixed(0)}% similar
                     </p>
                   ))}
                 </div>
@@ -439,14 +439,14 @@ export default function NewComplaintPage() {
                     'ml-auto text-xs font-semibold px-2.5 py-0.5 rounded-full',
                     severityColors[riskAssessment.severity || ''] || 'text-gray-500 bg-gray-100'
                   )}>
-                    {riskAssessment.severity || '—'}
+                    {riskAssessment.severity || '-'}
                   </span>
                 </div>
 
                 {riskAssessment.regulatory_reportable && (
                   <div className="flex items-center gap-1.5 mb-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                     <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
-                    May require regulatory notification (MHRA/USFDA) — AI suggestion, requires QA sign-off
+                    May require regulatory notification (MHRA/USFDA) - AI suggestion, requires QA sign-off
                   </div>
                 )}
 
@@ -511,7 +511,7 @@ export default function NewComplaintPage() {
           </div>
         </div>
 
-        {/* RIGHT PANE — AIVOA Copilot */}
+        {/* RIGHT PANE - AIVOA Copilot */}
         <div className={cn(
           'flex flex-col w-full lg:w-[45%] bg-gray-50 dark:bg-dark-bg overflow-hidden',
           activeTab !== 'copilot' && 'hidden lg:flex'

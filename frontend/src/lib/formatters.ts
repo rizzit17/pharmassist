@@ -1,7 +1,7 @@
 import type { ComplaintStatus, SeverityLevel } from '@/types/complaint'
 
 export const formatDate = (date?: string | null): string => {
-  if (!date) return '—'
+  if (!date) return '-'
   return new Date(date).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -10,7 +10,7 @@ export const formatDate = (date?: string | null): string => {
 }
 
 export const formatDateTime = (date?: string | null): string => {
-  if (!date) return '—'
+  if (!date) return '-'
   return new Date(date).toLocaleString('en-GB', {
     day: '2-digit',
     month: 'short',

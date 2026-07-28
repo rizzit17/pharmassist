@@ -25,7 +25,7 @@ def _build_assistant_message(state: ComplaintGraphState) -> str:
 
     # Error states
     if status == "error":
-        return state.get("assistant_message") or "I'm having trouble reaching the AI service — please try again in a moment."
+        return state.get("assistant_message") or "I am having trouble reaching the AI service, please try again in a moment."
 
     # Needs clarification — return the clarifying question directly
     if status == "needs_clarification":
@@ -49,30 +49,29 @@ def _build_assistant_message(state: ComplaintGraphState) -> str:
 
     if intent == "NEW_COMPLAINT":
         extracted_count = len([v for v in complaint.values() if v is not None])
-        parts.append(f"✅ I've extracted {extracted_count} fields from your complaint description.")
+        parts.append(f"Extracted {extracted_count} fields from your complaint description.")
     elif intent == "DOCUMENT_UPLOAD":
         file_name = state.get("uploaded_file_name", "your document")
         extracted_count = len([v for v in complaint.values() if v is not None])
-        parts.append(f"📄 I've processed {file_name} and extracted {extracted_count} fields.")
+        parts.append(f"Processed {file_name} and extracted {extracted_count} fields.")
     elif intent == "EDIT_COMPLAINT":
         if updated_fields:
             field_list = ", ".join(f"'{f}'" for f in updated_fields[:5])
-            parts.append(f"✏️ Updated: {field_list}.")
+            parts.append(f"Updated: {field_list}.")
         else:
-            parts.append("I reviewed your correction but didn't find clear field updates to apply.")
+            parts.append("I reviewed your correction but did not find clear field updates to apply.")
 
     # Risk assessment summary
     if risk.get("severity"):
-        severity_emoji = {"Critical": "🔴", "Major": "🟠", "Minor": "🟡"}.get(risk["severity"], "⚪")
-        parts.append(f"{severity_emoji} Risk classified as {risk['severity']}.")
+        parts.append(f"Risk classified as {risk['severity']}.")
         if risk.get("regulatory_reportable"):
-            parts.append("⚠️ This complaint may require regulatory notification — please review with QA.")
+            parts.append("This complaint may require regulatory notification, please review with QA.")
 
     # Missing fields notice
     missing = completeness.get("missing_fields", [])
     if missing:
         missing_str = ", ".join(missing[:4])
-        parts.append(f"ℹ️ Still missing: {missing_str}.")
+        parts.append(f"Still missing: {missing_str}.")
 
     # Duplicate warning
     if duplicate_warning.get("found"):
@@ -80,7 +79,7 @@ def _build_assistant_message(state: ComplaintGraphState) -> str:
         if candidates:
             top = candidates[0]
             parts.append(
-                f"🔔 Possible duplicate detected: {top.get('complaint_number', '')} "
+                f"Possible duplicate detected: {top.get('complaint_number', '')} "
                 f"(similarity: {top.get('similarity_score', 0):.0%}). Please review before committing."
             )
 
@@ -88,7 +87,7 @@ def _build_assistant_message(state: ComplaintGraphState) -> str:
     if completeness.get("is_complete") and risk.get("severity"):
         parts.append("The form is complete. You can Commit to QMS Ledger when ready.")
 
-    return " ".join(parts) if parts else "I've processed your request. Please review the form."
+    return " ".join(parts) if parts else "Processed your request. Please review the form."
 
 
 async def response_formatter_node(state: ComplaintGraphState) -> dict:

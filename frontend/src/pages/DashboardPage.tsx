@@ -31,7 +31,7 @@ function KPICard({ title, value, subtitle, icon: Icon, color, trend }: any) {
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{value ?? '—'}</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{value ?? '-'}</p>
           {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
         </div>
         <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', color)}>
@@ -209,8 +209,8 @@ export default function DashboardPage() {
                         onClick={() => navigate(`/complaints/${c.id}`)}
                       >
                         <td className="px-4 py-3 font-medium text-primary-600 dark:text-dark-accent">{c.complaint_number}</td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{c.product_name || '—'}</td>
-                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{c.customer_name || '—'}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{c.product_name || '-'}</td>
+                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{c.customer_name || '-'}</td>
                         <td className="px-4 py-3">
                           <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', getStatusColor(c.status))}>
                             {getStatusLabel(c.status)}
@@ -221,7 +221,7 @@ export default function DashboardPage() {
                             <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', getSeverityColor(latestAnalysis.severity))}>
                               {latestAnalysis.severity}
                             </span>
-                          ) : '—'}
+                          ) : '-'}
                         </td>
                         <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{formatDate(c.created_at)}</td>
                       </tr>

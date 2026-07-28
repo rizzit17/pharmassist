@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 /**
- * useAutoScroll — always scrolls a container to the bottom when content changes.
+ * useAutoScroll - always scrolls a container to the bottom when content changes.
  * Used by the chat panel to keep latest messages in view.
  */
 export function useAutoScroll<T extends HTMLElement>(deps: any[]) {

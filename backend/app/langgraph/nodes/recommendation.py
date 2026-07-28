@@ -96,7 +96,7 @@ Risk Assessment: {risk.get('initial_risk_assessment', '')}
         logger.error("Recommendation node failed: %s", e)
         return {
             "recommendations": {
-                "root_cause": ["Unable to generate root cause analysis — please assess manually"],
+                "root_cause": ["Unable to generate root cause analysis - please assess manually"],
                 "capa": ["Route to QA Investigation"],
             }
         }

@@ -170,6 +170,6 @@ User's correction/update:
             "updated_fields": [],
             "requires_risk_rerun": False,
             "status": "error",
-            "assistant_message": "I'm having trouble reaching the AI service — please try again in a moment.",
+            "assistant_message": "I'm having trouble reaching the AI service - please try again in a moment.",
             "error": str(e),
         }

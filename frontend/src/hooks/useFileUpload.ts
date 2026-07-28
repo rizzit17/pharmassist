@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react'
 
 /**
- * useFileUpload — handles file selection and drag-and-drop validation.
+ * useFileUpload - handles file selection and drag-and-drop validation.
  */
 export function useFileUpload(
   onFileSelected: (file: File) => void,

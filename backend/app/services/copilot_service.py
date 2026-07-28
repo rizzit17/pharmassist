@@ -100,7 +100,7 @@ class CopilotService:
             final_state = {
                 **initial_state,
                 "status": "error",
-                "assistant_message": "I'm having trouble reaching the AI service — please try again in a moment.",
+                "assistant_message": "I'm having trouble reaching the AI service - please try again in a moment.",
             }
 
         # Save assistant response to DB
@@ -168,7 +168,7 @@ class CopilotService:
             final_state = {
                 **initial_state,
                 "status": "error",
-                "assistant_message": "I'm having trouble processing your file — please try again or paste the complaint text instead.",
+                "assistant_message": "I'm having trouble processing your file - please try again or paste the complaint text instead.",
             }
 
         await self.chat_repo.save_message(

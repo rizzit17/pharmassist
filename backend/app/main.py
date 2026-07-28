@@ -1,5 +1,5 @@
 """
-AIVOA Customer Complaint Management System — FastAPI Application Entry Point
+AIVOA Customer Complaint Management System: FastAPI Application Entry Point
 """
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -19,11 +19,11 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup and shutdown lifecycle."""
-    logger.info("🚀 AIVOA CMS starting up...")
+    logger.info("AIVOA CMS starting up...")
     await create_db_tables()
-    logger.info("✅ Database tables verified.")
+    logger.info("Database tables verified.")
     yield
-    logger.info("👋 AIVOA CMS shutting down.")
+    logger.info("AIVOA CMS shutting down.")
 
 
 app = FastAPI(

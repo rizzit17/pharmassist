@@ -12,7 +12,7 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
       <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{label}</p>
-      <p className="text-sm text-gray-900 dark:text-white mt-0.5">{value || '—'}</p>
+      <p className="text-sm text-gray-900 dark:text-white mt-0.5">{value || '-'}</p>
     </div>
   )
 }
@@ -155,7 +155,7 @@ export default function ComplaintDetailPage() {
               <Field label="Complaint Category" value={complaint.complaint_category} />
               <div>
                 <p className="text-xs font-medium text-gray-500 mb-1">Description</p>
-                <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{complaint.complaint_description || '—'}</p>
+                <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{complaint.complaint_description || '-'}</p>
               </div>
             </div>
           </div>

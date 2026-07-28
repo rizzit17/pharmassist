@@ -123,7 +123,7 @@ Source: {complaint.get('source', 'Unknown')}
         risk_assessment = {
             "severity": severity,
             "suggested_next_action": result.get("suggested_next_action", ""),
-            "initial_risk_assessment": result.get("initial_risk_assessment", "") + "\n\n⚠️ AI-generated assessment — requires QA personnel review.",
+            "initial_risk_assessment": result.get("initial_risk_assessment", "") + "\n\nAI-generated assessment - requires QA personnel review.",
             "regulatory_reportable": bool(result.get("regulatory_reportable", False)),
         }
 
@@ -137,7 +137,7 @@ Source: {complaint.get('source', 'Unknown')}
             "risk_assessment": {
                 "severity": "Major",
                 "suggested_next_action": "Route to QA Investigation",
-                "initial_risk_assessment": "Risk assessment unavailable — AI service error. Please assess manually.",
+                "initial_risk_assessment": "Risk assessment unavailable - AI service error. Please assess manually.",
                 "regulatory_reportable": False,
             },
             "status": "error" if not state.get("complaint") else state.get("status", "success"),
