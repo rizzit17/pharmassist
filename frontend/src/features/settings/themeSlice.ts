@@ -4,6 +4,7 @@ interface ThemeState {
   isDark: boolean
 }
 
+const saved = typeof window !== 'undefined' ? localStorage.getItem('aivoa_theme') : null
 const initialDark = saved === 'dark'
 
 const initialState: ThemeState = {
@@ -11,10 +12,12 @@ const initialState: ThemeState = {
 }
 
 // Apply immediately on load
-if (initialDark) {
-  document.documentElement.classList.add('dark')
-} else {
-  document.documentElement.classList.remove('dark')
+if (typeof document !== 'undefined') {
+  if (initialDark) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
 }
 
 const themeSlice = createSlice({
