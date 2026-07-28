@@ -6,9 +6,10 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { logout } from '@/features/auth/authSlice'
+import { logout, setCredentials } from '@/features/auth/authSlice'
 import { toggleTheme } from '@/features/settings/themeSlice'
 import { cn } from '@/lib/utils'
+import { authApi } from '@/lib/api'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -34,6 +35,21 @@ export default function AppShell() {
   const isDark = useAppSelector((s) => s.theme.isDark)
   const user = useAppSelector((s) => s.auth.user)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  React.useEffect(() => {
+    const ensureAuth = async () => {
+      const token = localStorage.getItem('aivoa_token')
+      if (!token) {
+        try {
+          const res = await authApi.demo()
+          dispatch(setCredentials({ user: res.user, token: res.token.access_token }))
+        } catch (err) {
+          console.error('Auto-authentication failed', err)
+        }
+      }
+    }
+    ensureAuth()
+  }, [dispatch])
 
   const breadcrumb = pathLabels[location.pathname] || 'AIVOA'
 
