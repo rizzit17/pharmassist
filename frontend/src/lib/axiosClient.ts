@@ -11,7 +11,7 @@ const getBaseUrl = () => {
     !window.location.hostname.includes('localhost') &&
     !window.location.hostname.includes('127.0.0.1')
   ) {
-    return 'https://pharmassist-backend-5t5q.onrender.com/api/v1'
+    return 'https://aivoa-backend-5t5q.onrender.com/api/v1'
   }
   return '/api/v1'
 }
