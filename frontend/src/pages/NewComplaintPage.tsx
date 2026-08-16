@@ -514,7 +514,7 @@ export default function NewComplaintPage() {
           </div>
         </div>
 
-        {/* RIGHT PANE - AIVOA Copilot */}
+        {/* RIGHT PANE - PharmAssist Copilot */}
         <div className={cn(
           'flex flex-col w-full lg:w-[45%] bg-[#F1F0FE] dark:bg-dark-bg overflow-hidden',
           activeTab !== 'copilot' && 'hidden lg:flex'
@@ -522,10 +522,10 @@ export default function NewComplaintPage() {
           {/* Chat header */}
           <div className="px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border p-1 flex items-center justify-center shrink-0">
-              <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
+              <img src="/logo.png" alt="PharmAssist Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900 dark:text-white">AIVOA Copilot</h2>
+              <h2 className="text-sm font-bold text-gray-900 dark:text-white">PharmAssist Copilot</h2>
               <p className="text-xs text-gray-500 dark:text-gray-400">Drop complaint files or paste text below.</p>
             </div>
             <div className="ml-auto flex items-center gap-1.5">

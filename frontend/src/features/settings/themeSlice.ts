@@ -6,13 +6,13 @@ interface ThemeState {
 
 // Clear legacy key to ensure Light Mode default on existing sessions
 if (typeof window !== 'undefined') {
-  if (!localStorage.getItem('aivoa_theme_v2')) {
-    localStorage.removeItem('aivoa_theme')
-    localStorage.setItem('aivoa_theme_v2', 'light')
+  if (!localStorage.getItem('pharmassist_theme_v2')) {
+    localStorage.removeItem('pharmassist_theme')
+    localStorage.setItem('pharmassist_theme_v2', 'light')
   }
 }
 
-const saved = typeof window !== 'undefined' ? localStorage.getItem('aivoa_theme_v2') : 'light'
+const saved = typeof window !== 'undefined' ? localStorage.getItem('pharmassist_theme_v2') : 'light'
 const initialDark = saved === 'dark'
 
 const initialState: ThemeState = {
@@ -36,10 +36,10 @@ const themeSlice = createSlice({
       state.isDark = !state.isDark
       if (state.isDark) {
         document.documentElement.classList.add('dark')
-        localStorage.setItem('aivoa_theme_v2', 'dark')
+        localStorage.setItem('pharmassist_theme_v2', 'dark')
       } else {
         document.documentElement.classList.remove('dark')
-        localStorage.setItem('aivoa_theme_v2', 'light')
+        localStorage.setItem('pharmassist_theme_v2', 'light')
       }
     },
     setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
@@ -49,7 +49,7 @@ const themeSlice = createSlice({
       } else {
         document.documentElement.classList.remove('dark')
       }
-      localStorage.setItem('aivoa_theme_v2', action.payload)
+      localStorage.setItem('pharmassist_theme_v2', action.payload)
     },
   },
 })

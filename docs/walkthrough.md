@@ -1,6 +1,6 @@
-# AIVOA Customer Complaint Management System — Implementation Walkthrough
+# PharmAssist Customer Complaint Management System — Implementation Walkthrough
 
-The **AIVOA Customer Complaint Management System** is a complete, enterprise-grade AI-powered QMS module tailored for pharmaceutical API (Active Pharmaceutical Ingredient) and FDF (Finished Dosage Form) manufacturers.
+The **PharmAssist Customer Complaint Management System** is a complete, enterprise-grade AI-powered QMS module tailored for pharmaceutical API (Active Pharmaceutical Ingredient) and FDF (Finished Dosage Form) manufacturers.
 
 ---
 
@@ -87,4 +87,4 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:5173` and click **"Continue as Demo User"** to experience the AIVOA QMS Copilot!
+Visit `http://localhost:5173` and click **"Continue as Demo User"** to experience the PharmAssist QMS Copilot!

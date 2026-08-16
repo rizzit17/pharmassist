@@ -41,11 +41,11 @@ async def get_current_user(
     if not settings.auth_required:
         # Dev/test bypass — return demo user
         repo = UserRepository(db)
-        demo_user = await repo.get_by_email("demo@aivoa.com")
+        demo_user = await repo.get_by_email("demo@pharmassist.com")
         if demo_user:
             return demo_user
         # Fallback stub if seed hasn't run yet
-        return type("DemoUser", (), {"id": "demo", "email": "demo@aivoa.com", "name": "Demo User", "role": "qa_officer"})()
+        return type("DemoUser", (), {"id": "demo", "email": "demo@pharmassist.com", "name": "Demo User", "role": "qa_officer"})()
 
     if not credentials:
         raise HTTPException(

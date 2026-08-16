@@ -1,4 +1,4 @@
-# ARCHITECTURE.md — AIVOA Customer Complaint Management System
+# ARCHITECTURE.md — PharmAssist Customer Complaint Management System
 
 ## 1. High-Level System Diagram
 

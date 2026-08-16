@@ -10,7 +10,7 @@
 
 /* ── 1. Color Tokens & CSS Variables ──────────────────────────────── */
 :root {
-  /* Primary accent — indigo/violet, matches AIVOA brand */
+  /* Primary accent — indigo/violet, matches PharmAssist brand */
   --accent-600: #5B4FE9;   /* primary buttons, links, active states */
   --accent-500: #6C5CE7;   /* hover states, gradients */
   --accent-100: #E8E6FD;   /* icon-chip backgrounds, badge backgrounds */

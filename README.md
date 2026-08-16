@@ -1,6 +1,6 @@
-# AIVOA: AI-Powered Customer Complaint Management System (QMS)
+# PharmAssist: AI-Powered Customer Complaint Management System (QMS)
 
-> **AIVOA Internship Assessment Task**  
+> **PharmAssist Internship Assessment Task**  
 > An enterprise-grade, AI-driven Quality Management System (QMS) module designed for Pharmaceutical API (Active Pharmaceutical Ingredients) & FDF (Finished Dosage Form) Manufacturers. Features an interactive **LangGraph Multi-Node AI Copilot** that extracts, validates, risk-assesses, and deduplicates customer complaints in compliance with GxP and regulatory standards (USFDA / MHRA / WHO-GMP).
 
 ---
@@ -39,7 +39,7 @@
 ## Core Functionalities
 
 ### 1. **Automated Complaint Extraction & Triage**
-- Upload complaint documents (`.pdf`, `.eml`, `.txt`) or paste raw unstructured text into the **AIVOA Copilot**.
+- Upload complaint documents (`.pdf`, `.eml`, `.txt`) or paste raw unstructured text into the **PharmAssist Copilot**.
 - Extracts critical GxP fields automatically: *Customer Name, Source, Product Name/Grade, Batch/Lot Number, Affected Quantity, Manufacturing Date, Expiry Date, Site Block, and NPM Impact*.
 
 ### 2. **AI Risk Assessment & Severity Classification**
@@ -79,7 +79,7 @@ pharmassist/
 │   ├── main.py                   # FastAPI application entrypoint
 │   └── requirements.txt          # Python dependencies
 ├── .github/workflows/ci.yml      # GitHub Actions CI build & verification workflow
-└── DESIGN_SYSTEM.md              # AIVOA Enterprise Design Guidelines
+└── DESIGN_SYSTEM.md              # PharmAssist Enterprise Design Guidelines
 ```
 
 ---
@@ -152,5 +152,5 @@ Designed with reference to:
 ---
 
 <p align="center">
-Developed for the <b>AIVOA Technical Internship Assessment</b>.
+Developed for the <b>PharmAssist Technical Internship Assessment</b>.
 </p>

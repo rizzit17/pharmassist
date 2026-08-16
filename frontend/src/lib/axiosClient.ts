@@ -11,7 +11,7 @@ const getBaseUrl = () => {
     !window.location.hostname.includes('localhost') &&
     !window.location.hostname.includes('127.0.0.1')
   ) {
-    return 'https://aivoa-backend-5t5q.onrender.com/api/v1'
+    return 'https://pharmassist-backend-5t5q.onrender.com/api/v1'
   }
   return '/api/v1'
 }
@@ -30,12 +30,12 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     const isAuthRoute = config.url?.includes('/auth/login') || config.url?.includes('/auth/demo')
-    const token = localStorage.getItem('aivoa_token')
+    const token = localStorage.getItem('pharmassist_token')
     if (token && !isAuthRoute) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    const primaryModel = localStorage.getItem('aivoa_primary_model')
-    const secondaryModel = localStorage.getItem('aivoa_secondary_model')
+    const primaryModel = localStorage.getItem('pharmassist_primary_model')
+    const secondaryModel = localStorage.getItem('pharmassist_secondary_model')
     if (primaryModel) {
       config.headers['X-Primary-Model'] = primaryModel
     }
@@ -52,8 +52,8 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('aivoa_token')
-      localStorage.removeItem('aivoa_user')
+      localStorage.removeItem('pharmassist_token')
+      localStorage.removeItem('pharmassist_user')
       if (window.location.pathname !== '/login') {
         window.location.href = '/login'
       }

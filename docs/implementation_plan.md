@@ -1,8 +1,8 @@
-# AIVOA Customer Complaint Management System — Implementation Plan
+# PharmAssist Customer Complaint Management System — Implementation Plan
 
 ## Overview
 
-A full-stack, enterprise-grade SaaS application — the **AIVOA Customer Complaint Management System** — an AI-powered QMS module for pharmaceutical API/FDF manufacturers. The centerpiece is an AI Copilot (LangGraph multi-node stateful graph) that lets quality personnel log, edit, and extract customer complaints using natural language and document uploads.
+A full-stack, enterprise-grade SaaS application — the **PharmAssist Customer Complaint Management System** — an AI-powered QMS module for pharmaceutical API/FDF manufacturers. The centerpiece is an AI Copilot (LangGraph multi-node stateful graph) that lets quality personnel log, edit, and extract customer complaints using natural language and document uploads.
 
 **Target Directory:** `c:\Users\Rishit\Desktop\pharmassist\`
 
@@ -321,7 +321,7 @@ frontend/
 - `email_03_discoloration.eml`
 
 #### [NEW] `backend/seed.py`
-- Seeds 1 demo user (demo@aivoa.com / demo)
+- Seeds 1 demo user (demo@pharmassist.com / demo)
 - Seeds 15–20 realistic historical complaints across varied severities/statuses/products
 - Seeds `ai_analysis`, `audit_logs`, `chat_history` linked to seeded complaints
 

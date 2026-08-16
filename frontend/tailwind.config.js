@@ -12,7 +12,7 @@ export default {
         mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'monospace'],
       },
       colors: {
-        // AIVOA Brand Primary Accent
+        // PharmAssist Brand Primary Accent
         primary: {
           50: '#F1F0FE',
           100: '#E8E6FD',

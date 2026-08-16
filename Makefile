@@ -2,7 +2,7 @@
 
 # ── Dev ──────────────────────────────────────────────────────────
 dev:
-	@echo "🚀 Starting AIVOA Complaint Management System..."
+	@echo "🚀 Starting PharmAssist Complaint Management System..."
 	docker compose up --build
 
 dev-debug:

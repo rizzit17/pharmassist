@@ -9,9 +9,9 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: JSON.parse(localStorage.getItem('aivoa_user') || 'null'),
-  token: localStorage.getItem('aivoa_token'),
-  isAuthenticated: !!localStorage.getItem('aivoa_token'),
+  user: JSON.parse(localStorage.getItem('pharmassist_user') || 'null'),
+  token: localStorage.getItem('pharmassist_token'),
+  isAuthenticated: !!localStorage.getItem('pharmassist_token'),
   isLoading: false,
 }
 
@@ -26,22 +26,22 @@ const authSlice = createSlice({
       state.user = action.payload.user
       state.token = action.payload.token
       state.isAuthenticated = true
-      localStorage.setItem('aivoa_token', action.payload.token)
-      localStorage.setItem('aivoa_user', JSON.stringify(action.payload.user))
+      localStorage.setItem('pharmassist_token', action.payload.token)
+      localStorage.setItem('pharmassist_user', JSON.stringify(action.payload.user))
     },
     updateUser: (state, action: PayloadAction<{ name?: string; role?: string }>) => {
       if (state.user) {
         if (action.payload.name !== undefined) state.user.name = action.payload.name
         if (action.payload.role !== undefined) state.user.role = action.payload.role
-        localStorage.setItem('aivoa_user', JSON.stringify(state.user))
+        localStorage.setItem('pharmassist_user', JSON.stringify(state.user))
       }
     },
     logout: (state) => {
       state.user = null
       state.token = null
       state.isAuthenticated = false
-      localStorage.removeItem('aivoa_token')
-      localStorage.removeItem('aivoa_user')
+      localStorage.removeItem('pharmassist_token')
+      localStorage.removeItem('pharmassist_user')
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload

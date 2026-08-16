@@ -1,4 +1,4 @@
-# AIVOA CMS — Build Task Tracker
+# PharmAssist CMS — Build Task Tracker
 
 ## Phase 1 — Monorepo Scaffold + Docker + Env Files
 - [x] Root `.env.example` + `.gitignore` + `Makefile`

@@ -1,4 +1,4 @@
-# DESIGN_SYSTEM.md — Visual Restyle Pass (AIVOA Brand Match)
+# DESIGN_SYSTEM.md — Visual Restyle Pass (PharmAssist Brand Match)
 
 **Scope: STYLING ONLY.** This document describes CSS/Tailwind-level visual changes to apply to the existing, fully-built application. Do not modify component logic, state management, API contracts, routing, LangGraph nodes, database schema, or any functional behavior. Every change below should be achievable by editing `tailwind.config.ts`, global CSS variables, and className/style props on existing components — no new components, no new props, no new features.
 
@@ -12,7 +12,7 @@ Replace existing Tailwind/CSS color variables with these. Keep variable *names* 
 
 ```css
 :root {
-  /* Primary accent — indigo/violet, matches AIVOA brand */
+  /* Primary accent — indigo/violet, matches PharmAssist brand */
   --accent-600: #5B4FE9;   /* primary buttons, links, active states */
   --accent-500: #6C5CE7;   /* hover states, gradients */
   --accent-100: #E8E6FD;   /* icon-chip backgrounds, badge backgrounds */
@@ -26,7 +26,7 @@ Replace existing Tailwind/CSS color variables with these. Keep variable *names* 
   --text-secondary: #5B5A6A;  /* body copy gray */
   --text-muted:     #9997A8;  /* placeholder / "Awaiting AI extraction..." text */
 
-  /* Semantic status (traffic-light system, matches AIVOA's own product) */
+  /* Semantic status (traffic-light system, matches PharmAssist's own product) */
   --status-success-bg: #E9F9EE;
   --status-success-text: #1C9A4B;
   --status-success-icon: #22C55E;
@@ -87,7 +87,7 @@ Keep Inter as the primary font (already correct). Add these adjustments:
 
 ## 3. Cards & Surfaces
 
-Current cards likely use soft shadows. Switch to AIVOA's actual pattern: **thin border, minimal/no shadow, larger radius.**
+Current cards likely use soft shadows. Switch to PharmAssist's actual pattern: **thin border, minimal/no shadow, larger radius.**
 
 ```css
 .card {
@@ -106,13 +106,13 @@ Current cards likely use soft shadows. Switch to AIVOA's actual pattern: **thin 
 
 **Where to apply:**
 - Every existing `<Card>` component: swap shadow-based elevation for border-based elevation
-- The "AI Copilot Risk Assessment" card specifically → `.card-tinted` (light indigo background, matches AIVOA's tinted-section pattern) instead of whatever background it currently has
+- The "AI Copilot Risk Assessment" card specifically → `.card-tinted` (light indigo background, matches PharmAssist's tinted-section pattern) instead of whatever background it currently has
 
 ---
 
 ## 4. Icon Chips
 
-AIVOA uses small rounded-square pastel icon containers everywhere (problem cards, module cards, feature list). Apply this pattern to existing icons in your app — same icons you already have, just wrap them differently.
+PharmAssist uses small rounded-square pastel icon containers everywhere (problem cards, module cards, feature list). Apply this pattern to existing icons in your app — same icons you already have, just wrap them differently.
 
 ```css
 .icon-chip {
@@ -213,7 +213,7 @@ Keep the existing green-highlight-on-update behavior exactly as built — only a
 - Assistant message bubbles: white background, `.card` border style (thin border, no heavy shadow), rounded-2xl
 - User message bubbles: solid `var(--accent-600)` background, white text, rounded-2xl
 - File upload card (e.g. "Fictional_Pharma_Customer_Complaint.pdf"): use `.card` style with a small colored file-type icon chip (`.icon-chip`) on the left
-- Any raw structured-data preview shown during extraction (optional, if you want the "on-brand" touch described earlier): render in a small `.font-mono-data` block with `var(--bg-page)` background and `.card` border — mimics AIVOA's own "AI Draft → qms_ai_drafts (status: GENERATING)" log-style snippet aesthetic
+- Any raw structured-data preview shown during extraction (optional, if you want the "on-brand" touch described earlier): render in a small `.font-mono-data` block with `var(--bg-page)` background and `.card` border — mimics PharmAssist's own "AI Draft → qms_ai_drafts (status: GENERATING)" log-style snippet aesthetic
 - "POWERED BY LANGGRAPH" footer caption → style as `.eyebrow-label` treatment but muted (`--text-muted` color instead of accent) since it's a footnote, not a section header
 
 ---
@@ -222,7 +222,7 @@ Keep the existing green-highlight-on-update behavior exactly as built — only a
 
 - Add a thin solid `var(--accent-600)` ticker/banner strip is NOT recommended for your app (that's marketing-site chrome, not appropriate for an internal QA tool) — skip this one, mentioned only to explicitly rule it out
 - Browser-chrome framing (macOS traffic-light dots) around any embedded preview/demo screenshot if your Dashboard or README includes product screenshots — nice touch for the demo video/README visuals, not required in-app
-- Section headers on Dashboard/List pages, if they exist, can adopt the alternating white/`--accent-50` background rhythm AIVOA uses on their marketing site, to reinforce the visual system beyond just the New Complaint screen
+- Section headers on Dashboard/List pages, if they exist, can adopt the alternating white/`--accent-50` background rhythm PharmAssist uses on their marketing site, to reinforce the visual system beyond just the New Complaint screen
 
 ---
 

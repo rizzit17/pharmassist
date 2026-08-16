@@ -87,7 +87,7 @@ export default function CopilotPage() {
       <div className="card p-4 mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border p-1.5 flex items-center justify-center shrink-0">
-            <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
+            <img src="/logo.png" alt="PharmAssist Logo" className="w-full h-full object-contain" />
           </div>
           <div>
             <h1 className="text-lg font-extrabold tracking-tight text-[#0F0E17] dark:text-white">Full-Screen AI Copilot</h1>

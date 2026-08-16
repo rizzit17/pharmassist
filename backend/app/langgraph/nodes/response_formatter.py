@@ -37,7 +37,7 @@ def _build_assistant_message(state: ComplaintGraphState) -> str:
 
     if intent == "GENERAL_QUERY" or text_lower in greetings or any(text_lower.startswith(g) for g in ["hi ", "hello ", "hey "]):
         if text_lower in greetings or any(g in text_lower for g in ["hi copilot", "hello copilot", "hi", "hello", "hey"]):
-            return "Hello! I am your AIVOA QA Copilot. I can help you extract customer complaints from plain text or PDF/email files, generate AI risk assessments, and manage your QMS records. How can I assist you today?"
+            return "Hello! I am your PharmAssist QA Copilot. I can help you extract customer complaints from plain text or PDF/email files, generate AI risk assessments, and manage your QMS records. How can I assist you today?"
         
         if state.get("assistant_message") and state["assistant_message"] != "I've processed your query.":
             return state["assistant_message"]

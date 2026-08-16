@@ -94,7 +94,7 @@ def create_pdf(filename, title, customer, product, strength, lot, qty, mfg, exp,
     story.append(Spacer(1, 30))
 
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#CBD5E1'), spaceAfter=15))
-    story.append(Paragraph("Confidential Document — Generated for AIVOA Quality Management System", sub_header_style))
+    story.append(Paragraph("Confidential Document — Generated for PharmAssist Quality Management System", sub_header_style))
 
     doc.build(story)
     print(f"Generated PDF: {filename}")

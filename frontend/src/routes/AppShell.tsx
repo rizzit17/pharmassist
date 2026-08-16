@@ -38,7 +38,7 @@ export default function AppShell() {
 
   React.useEffect(() => {
     const ensureAuth = async () => {
-      const token = localStorage.getItem('aivoa_token')
+      const token = localStorage.getItem('pharmassist_token')
       if (!token) {
         try {
           const res = await authApi.demo()
@@ -63,7 +63,7 @@ export default function AppShell() {
     ensureAuth()
   }, [dispatch])
 
-  const breadcrumb = pathLabels[location.pathname] || 'AIVOA'
+  const breadcrumb = pathLabels[location.pathname] || 'PharmAssist'
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-dark-bg overflow-hidden">
@@ -85,10 +85,10 @@ export default function AppShell() {
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-[#262438]">
           <div className="w-9 h-9 rounded-xl bg-white/10 p-1.5 flex items-center justify-center shrink-0">
-            <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
+            <img src="/logo.png" alt="PharmAssist Logo" className="w-full h-full object-contain" />
           </div>
           <div>
-            <h1 className="font-extrabold text-[#FFFFFF] text-base tracking-tight leading-none">AIVOA</h1>
+            <h1 className="font-extrabold text-[#FFFFFF] text-base tracking-tight leading-none">PharmAssist</h1>
             <p className="text-[10px] text-gray-400 font-medium tracking-wide mt-1">QMS Copilot</p>
           </div>
           <button
@@ -150,7 +150,7 @@ export default function AppShell() {
 
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
-            <span className="text-gray-400">AIVOA</span>
+            <span className="text-gray-400">PharmAssist</span>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="font-medium text-gray-900 dark:text-dark-text-bright">{breadcrumb}</span>
           </div>

@@ -1,5 +1,5 @@
 """
-LangGraph StateGraph definition for the AIVOA AI Copilot.
+LangGraph StateGraph definition for the PharmAssist AI Copilot.
 Implements genuine multi-node stateful graph with conditional edges and per-session checkpointing.
 
 Graph topology:

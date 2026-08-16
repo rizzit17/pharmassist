@@ -17,17 +17,17 @@ export default function SettingsPage() {
 
   // Model selection state
   const [primaryModel, setPrimaryModel] = useState(
-    localStorage.getItem('aivoa_primary_model') || 'llama-3.1-8b-instant'
+    localStorage.getItem('pharmassist_primary_model') || 'llama-3.1-8b-instant'
   )
   const [secondaryModel, setSecondaryModel] = useState(
-    localStorage.getItem('aivoa_secondary_model') || 'llama-3.3-70b-versatile'
+    localStorage.getItem('pharmassist_secondary_model') || 'llama-3.3-70b-versatile'
   )
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault()
     dispatch(updateUser({ name, role }))
-    localStorage.setItem('aivoa_primary_model', primaryModel)
-    localStorage.setItem('aivoa_secondary_model', secondaryModel)
+    localStorage.setItem('pharmassist_primary_model', primaryModel)
+    localStorage.setItem('pharmassist_secondary_model', secondaryModel)
     setSavedSuccess(true)
     setTimeout(() => setSavedSuccess(false), 3000)
   }
@@ -98,7 +98,7 @@ export default function SettingsPage() {
                 <input
                   type="email"
                   disabled
-                  value={user?.email || 'demo@aivoa.com'}
+                  value={user?.email || 'demo@pharmassist.com'}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-100 dark:bg-dark-border/40 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
                 />
               </div>
@@ -147,7 +147,7 @@ export default function SettingsPage() {
                 value={primaryModel}
                 onChange={(e) => {
                   setPrimaryModel(e.target.value)
-                  localStorage.setItem('aivoa_primary_model', e.target.value)
+                  localStorage.setItem('pharmassist_primary_model', e.target.value)
                 }}
                 className="font-mono-data bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-[#5B4FE9] dark:text-dark-accent px-3 py-1.5 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
               >
@@ -166,7 +166,7 @@ export default function SettingsPage() {
                 value={secondaryModel}
                 onChange={(e) => {
                   setSecondaryModel(e.target.value)
-                  localStorage.setItem('aivoa_secondary_model', e.target.value)
+                  localStorage.setItem('pharmassist_secondary_model', e.target.value)
                 }}
                 className="font-mono-data bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-[#5B4FE9] dark:text-violet-400 px-3 py-1.5 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none"
               >

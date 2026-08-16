@@ -34,12 +34,12 @@ export default function SplashScreen({ onFinish }: { onFinish?: () => void }) {
       >
         {/* Brand Icon Mark */}
         <div className="w-20 h-20 rounded-2xl bg-white dark:bg-dark-surface border border-gray-100 dark:border-dark-border flex items-center justify-center shadow-lg shadow-[#5B4FE9]/10 p-3">
-          <img src="/logo.png" alt="AIVOA Logo" className="w-full h-full object-contain" />
+          <img src="/logo.png" alt="PharmAssist Logo" className="w-full h-full object-contain" />
         </div>
 
         {/* Branding & Wordmark */}
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#0F0E17] dark:text-white">AIVOA</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#0F0E17] dark:text-white">PharmAssist</h1>
           <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mt-1">QMS Copilot</p>
         </div>
 

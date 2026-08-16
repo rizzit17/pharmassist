@@ -16,7 +16,7 @@ const initialState: ChatState = {
       id: 'welcome',
       role: 'assistant',
       content:
-        'Hello! I\'m the AIVOA Copilot. You can describe a customer complaint in plain language, or upload a PDF/email document - I\'ll extract the structured data and populate the form automatically.\n\nTo get started, type a complaint description or drag & drop a file.',
+        'Hello! I\'m the PharmAssist Copilot. You can describe a customer complaint in plain language, or upload a PDF/email document - I\'ll extract the structured data and populate the form automatically.\n\nTo get started, type a complaint description or drag & drop a file.',
       timestamp: new Date().toISOString(),
     },
   ],

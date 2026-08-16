@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/health")
 async def health():
-    return {"status": "ok", "service": "AIVOA CMS Backend"}
+    return {"status": "ok", "service": "PharmAssist CMS Backend"}
 
 
 @router.get("/health/db")

@@ -31,10 +31,10 @@ class AuthService:
 
     async def demo_login(self) -> AuthResponse:
         """Return auth response for the seeded demo user without password verification."""
-        user = await self.user_repo.get_by_email("demo@aivoa.com")
+        user = await self.user_repo.get_by_email("demo@pharmassist.com")
         if not user:
             user = await self.user_repo.create(
-                email="demo@aivoa.com",
+                email="demo@pharmassist.com",
                 name="Demo QA Officer",
                 hashed_password=hash_password("demo1234"),
                 role="qa_officer",

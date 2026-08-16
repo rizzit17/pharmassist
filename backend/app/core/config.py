@@ -17,11 +17,11 @@ class Settings(BaseSettings):
     )
 
     # ── App ───────────────────────────────────────────────────────
-    app_name: str = "AIVOA Customer Complaint Management System"
+    app_name: str = "PharmAssist Customer Complaint Management System"
     debug: bool = False
 
     # ── Database ──────────────────────────────────────────────────
-    database_url: str = "sqlite+aiosqlite:///./aivoa.db"
+    database_url: str = "sqlite+aiosqlite:///./pharmassist.db"
 
     # ── Auth ──────────────────────────────────────────────────────
     jwt_secret: str = "dev_secret_change_in_production"

@@ -1,5 +1,5 @@
 """
-AIVOA Customer Complaint Management System: FastAPI Application Entry Point
+PharmAssist Customer Complaint Management System: FastAPI Application Entry Point
 """
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup and shutdown lifecycle."""
-    logger.info("AIVOA CMS starting up...")
+    logger.info("PharmAssist CMS starting up...")
     await create_db_tables()
     logger.info("Database tables verified.")
     try:
@@ -29,11 +29,11 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Auto-seed warning: {e}")
     yield
-    logger.info("AIVOA CMS shutting down.")
+    logger.info("PharmAssist CMS shutting down.")
 
 
 app = FastAPI(
-    title="AIVOA Customer Complaint Management System",
+    title="PharmAssist Customer Complaint Management System",
     description=(
         "AI-powered Quality Management System module for pharmaceutical "
         "API & FDF manufacturers. Features an AI Copilot (LangGraph multi-node "
@@ -104,7 +104,7 @@ app.include_router(dashboard.router, prefix=f"{API_PREFIX}/dashboard", tags=["Da
 @app.get("/", tags=["Root"])
 async def root():
     return {
-        "service": "AIVOA Customer Complaint Management System",
+        "service": "PharmAssist Customer Complaint Management System",
         "version": "1.0.0",
         "docs": "/docs",
         "status": "operational",

@@ -344,14 +344,14 @@ async def seed():
         # Create demo user
         demo_user = User(
             id=str(uuid.uuid4()),
-            email="demo@aivoa.com",
+            email="demo@pharmassist.com",
             name="Demo QA Officer",
             hashed_password=hash_password("demo1234"),
             role="qa_officer",
         )
         admin_user = User(
             id=str(uuid.uuid4()),
-            email="admin@aivoa.com",
+            email="admin@pharmassist.com",
             name="QA Manager Admin",
             hashed_password=hash_password("admin1234"),
             role="qa_manager",
@@ -409,7 +409,7 @@ async def seed():
                 id=str(uuid.uuid4()),
                 complaint_id=complaint_obj.id,
                 actor="ai",
-                actor_name="AIVOA Copilot",
+                actor_name="PharmAssist Copilot",
                 action_type="ai_extraction",
                 field_name="all_fields",
                 new_value="Initial extraction complete",
@@ -428,8 +428,8 @@ async def seed():
         await session.commit()
         print(f"[OK] Created {len(DEMO_COMPLAINTS)} complaints with AI analyses and audit logs")
         print("\n--- Seed Complete ---")
-        print("   Demo user:  demo@aivoa.com / demo1234")
-        print("   Admin user: admin@aivoa.com / admin1234")
+        print("   Demo user:  demo@pharmassist.com / demo1234")
+        print("   Admin user: admin@pharmassist.com / admin1234")
 
 
 if __name__ == "__main__":

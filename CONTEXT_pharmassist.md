@@ -1,8 +1,8 @@
-# CONTEXT.md — AIVOA Customer Complaint Management System
+# CONTEXT.md — PharmAssist Customer Complaint Management System
 
 ## 1. What This Project Is
 
-An AI-powered Customer Complaint Management System built for the **AIVOA AI Product Engineer (Interns) — Round 1** assignment. It targets the pharmaceutical manufacturing industry (API and FDF manufacturers) and digitizes the **Customer Complaint module** of a Quality Management System (QMS).
+An AI-powered Customer Complaint Management System built for the **PharmAssist AI Product Engineer (Interns) — Round 1** assignment. It targets the pharmaceutical manufacturing industry (API and FDF manufacturers) and digitizes the **Customer Complaint module** of a Quality Management System (QMS).
 
 The core idea: quality personnel should never manually fill a large complaint intake form. Instead, they type a natural-language description of a customer complaint, or upload a document (PDF, email, image), and an **AI Copilot** extracts the structured data, populates the form, runs a risk assessment, and stays available for natural-language corrections afterward — with the form and the AI always kept in sync.
 
@@ -20,9 +20,9 @@ This is inherently a data-entry-heavy, compliance-sensitive workflow — exactly
 
 ## 3. Assignment Requirements (Source of Truth)
 
-Provided by AIVOA:
+Provided by PharmAssist:
 - An assignment document describing objective, mandatory tech stack, and deliverables
-- A reference UI (screenshots of a two-pane "Log Customer Complaint" form + "AIVOA Copilot" chat panel)
+- A reference UI (screenshots of a two-pane "Log Customer Complaint" form + "PharmAssist Copilot" chat panel)
 - A demo video showing the expected end-to-end workflow
 
 **Mandatory tech stack:** React + Redux (frontend), Python + FastAPI (backend), LangGraph (AI agent framework), Groq API with `gemma2-9b-it` (and optionally `llama-3.3-70b-versatile`), MySQL/PostgreSQL, Google Inter font.
@@ -43,7 +43,7 @@ Provided by AIVOA:
 The reference UI shows a two-pane layout:
 
 - **Left pane:** "Log Customer Complaint" form (subtitle "API & FDF Quality Assurance Module") with a status pill (`Pending Triage` → `Ready to Commit`), sectioned fields (Origin & Customer Details, Product & Batch Identification, Facility & Material Impact, Defect Analysis), a distinct "AI Copilot Risk Assessment" card (severity, suggested next action, risk narrative), and a bottom "Commit to QMS Ledger" button.
-- **Right pane:** "AIVOA Copilot" chat panel — assistant/user message bubbles, file-upload cards for attached documents, inline processing indicators (e.g., "Extracting tabular data via OCR…"), a message input with attach + send controls, and a "Powered by LangGraph" footer.
+- **Right pane:** "PharmAssist Copilot" chat panel — assistant/user message bubbles, file-upload cards for attached documents, inline processing indicators (e.g., "Extracting tabular data via OCR…"), a message input with attach + send controls, and a "Powered by LangGraph" footer.
 - Observed interaction pattern: user pastes a complaint description → AI parses it and fills the form + generates risk assessment → user sends a correction ("the batch number is actually X") → AI updates only that field and highlights it green → user uploads a PDF → AI extracts and repopulates the form → user issues another natural-language correction on the newly extracted data, proving the extraction and chat-editing tools compose seamlessly.
 
 This observed loop (extract → populate → assess → correct → re-sync, repeatable across both text and document input) is the primary functional contract the build must satisfy — pixel-perfect UI cloning is explicitly not required by the assignment, but the workflow must be faithfully reproduced.
