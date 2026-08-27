@@ -29,33 +29,31 @@ export default function LoginPage() {
 
     try {
       const data = await authApi.login(email, password)
-      dispatch(setCredentials({ user: data.user, token: data.access_token }))
+      const token = data.token?.access_token || data.access_token
+      if (!token) throw new Error('No access token received from server.')
+      dispatch(setCredentials({ user: data.user, token }))
       navigate(from, { replace: true })
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Authentication failed. Please check your credentials.')
+      setError(err.response?.data?.detail || err.message || 'Authentication failed. Please check your credentials.')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleQuickDemo = async (demoEmail?: string) => {
+  const handleQuickDemo = async (demoEmail: string = 'demo@pharmassist.com') => {
     setError('')
     setIsLoading(true)
     try {
-      if (demoEmail === 'admin@pharmassist.com') {
-        setEmail('admin@pharmassist.com')
-        setPassword('admin1234')
-        const data = await authApi.login('admin@pharmassist.com', 'admin1234')
-        dispatch(setCredentials({ user: data.user, token: data.access_token }))
-      } else {
-        setEmail('demo@pharmassist.com')
-        setPassword('demo1234')
-        const data = await authApi.demo()
-        dispatch(setCredentials({ user: data.user, token: data.access_token }))
-      }
+      const demoPw = demoEmail === 'admin@pharmassist.com' ? 'admin1234' : 'demo1234'
+      setEmail(demoEmail)
+      setPassword(demoPw)
+      const data = await authApi.login(demoEmail, demoPw)
+      const token = data.token?.access_token || data.access_token
+      if (!token) throw new Error('No access token received.')
+      dispatch(setCredentials({ user: data.user, token }))
       navigate(from, { replace: true })
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Demo login failed.')
+      setError(err.response?.data?.detail || err.message || 'Demo login failed.')
     } finally {
       setIsLoading(false)
     }
@@ -187,7 +185,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="qa.specialist@pharmassist.io"
+                  placeholder="demo@pharmassist.com"
                   className="w-full pl-10 pr-3.5 py-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                 />
               </div>
