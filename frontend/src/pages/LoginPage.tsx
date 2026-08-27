@@ -42,12 +42,14 @@ export default function LoginPage() {
     setError('')
     setIsLoading(true)
     try {
-      if (demoEmail) {
-        setEmail(demoEmail)
-        setPassword('demo1234')
-        const data = await authApi.login(demoEmail, 'demo1234')
+      if (demoEmail === 'admin@pharmassist.com') {
+        setEmail('admin@pharmassist.com')
+        setPassword('admin1234')
+        const data = await authApi.login('admin@pharmassist.com', 'admin1234')
         dispatch(setCredentials({ user: data.user, token: data.access_token }))
       } else {
+        setEmail('demo@pharmassist.com')
+        setPassword('demo1234')
         const data = await authApi.demo()
         dispatch(setCredentials({ user: data.user, token: data.access_token }))
       }
@@ -246,7 +248,7 @@ export default function LoginPage() {
             <div className="grid grid-cols-2 gap-2.5">
               <button
                 type="button"
-                onClick={() => handleQuickDemo('qa.specialist@pharmassist.io')}
+                onClick={() => handleQuickDemo('demo@pharmassist.com')}
                 className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700/80 hover:border-indigo-500 dark:hover:border-indigo-500 bg-slate-50/60 dark:bg-slate-900/60 text-left transition-all group"
               >
                 <div className="flex items-center justify-between">
@@ -260,12 +262,12 @@ export default function LoginPage() {
 
               <button
                 type="button"
-                onClick={() => handleQuickDemo('qa.lead@pharmassist.io')}
+                onClick={() => handleQuickDemo('admin@pharmassist.com')}
                 className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700/80 hover:border-indigo-500 dark:hover:border-indigo-500 bg-slate-50/60 dark:bg-slate-900/60 text-left transition-all group"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
-                    QA Lead
+                    QA Lead / Admin
                   </span>
                   <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
                 </div>
