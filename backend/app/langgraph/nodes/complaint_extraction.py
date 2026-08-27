@@ -236,7 +236,10 @@ def _heuristic_extraction(text: str) -> Dict[str, Any]:
 
     # 1. Customer Name & Source
     text_lower = text.lower()
-    if "st. jude" in text_lower or "st jude" in text_lower:
+    m_inst = re.search(r'Reporting\s+Institution[:\s\n]+([^\n\r]+)', text, re.IGNORECASE)
+    if m_inst:
+        complaint["customer_name"] = m_inst.group(1).strip()
+    elif "st. jude" in text_lower or "st jude" in text_lower:
         complaint["customer_name"] = "St. Jude Memorial Hospital ICU"
     elif "metrocare" in text_lower:
         complaint["customer_name"] = "MetroCare Health System"
@@ -265,53 +268,62 @@ def _heuristic_extraction(text: str) -> Dict[str, Any]:
     else:
         complaint["source"] = "Direct Customer"
 
-    # 2. Product Strength
-    m_str = re.search(r'(\d+\s*(?:mg|g|mcg|ml|mL|%|USP Grade)(?:/\d+\s*mL)?)', text, re.IGNORECASE)
-    if m_str:
-        complaint["product_strength"] = m_str.group(1).strip()
-
-    # 3. Product Name
-    m_prod = re.search(r'\b([A-Z][a-z0-9]+(?:\s+[A-Z][a-z0-9]+)*\s+(?:Tablets|Capsules|Injection|Suspension|API|Inhaler|Solution))\b', text)
-    if m_prod:
-        complaint["product_name"] = m_prod.group(1).strip()
+    # 2. Product Name & Strength
+    m_prod_lbl = re.search(r'Product\s+Name[:\s\n]+([^\n\r]+)', text, re.IGNORECASE)
+    if m_prod_lbl:
+        complaint["product_name"] = m_prod_lbl.group(1).strip()
     else:
-        for drug in ["Ciprofloxacin Injection", "Amoxicillin Capsules", "Metformin HCl Tablets", "Atorvastatin Calcium API", "Omeprazole Capsules"]:
-            if drug.lower().split()[0] in text.lower():
-                complaint["product_name"] = drug
-                break
+        m_prod = re.search(r'\b([A-Z][a-z0-9]+(?:\s+[A-Z][a-z0-9]+)*\s+(?:Tablets|Capsules|Injection|Suspension|API|Inhaler|Solution))\b', text)
+        if m_prod:
+            complaint["product_name"] = m_prod.group(1).strip()
+        else:
+            for drug in ["Ciprofloxacin Injection", "Amoxicillin Capsules", "Metformin HCl Tablets", "Atorvastatin Calcium API", "Omeprazole Capsules"]:
+                if drug.lower().split()[0] in text.lower():
+                    complaint["product_name"] = drug
+                    break
 
-    # 4. Batch Number
-    m_batch = re.search(r'(?:batch|lot)(?:\s+number|\s+no|\s+id)?[:\s]+([A-Z0-9\-]+)', text, re.IGNORECASE)
+    m_str_lbl = re.search(r'Strength\s*(?:\/\s*Grade)?[:\s\n]+([^\n\r]+)', text, re.IGNORECASE)
+    if m_str_lbl:
+        complaint["product_strength"] = m_str_lbl.group(1).strip()
+    else:
+        m_str = re.search(r'(\d+\s*(?:mg|g|mcg|ml|mL|%|USP Grade)(?:/\d+\s*mL)?)', text, re.IGNORECASE)
+        if m_str:
+            complaint["product_strength"] = m_str.group(1).strip()
+
+    # 3. Batch Number
+    m_batch = re.search(r'(?:batch(?:\s*\/\s*lot)?|lot)(?:\s+number|\s+no\.?|\s+id)?[:\s\n]+([A-Z0-9\-]+)', text, re.IGNORECASE)
     if m_batch:
         complaint["batch_lot_number"] = m_batch.group(1).strip()
 
-    # 5. Quantity
+    # 4. Quantity
     m_qty = re.search(r'(\d+\s*(?:vials|boxes|bottles|strips|tablets|units|cartons|drums|kg))', text, re.IGNORECASE)
     if m_qty:
         complaint["affected_quantity"] = m_qty.group(1).strip()
 
-    # 6. Dates
-    m_mfg = re.search(r'(?:manufacturing|mfg)\s+date[:\s]+([A-Za-z]+\s+\d{4}|\d{4}-\d{2}-\d{2}|\d{2}/\d{4})', text, re.IGNORECASE)
+    # 5. Dates
+    m_mfg = re.search(r'(?:manufacturing|mfg)\s+date[:\s\n]+([A-Za-z0-9\-\/]+(?:\s+\d{4})?)', text, re.IGNORECASE)
     if m_mfg:
         complaint["manufacturing_date"] = _parse_date_to_iso(m_mfg.group(1))
 
-    m_exp = re.search(r'(?:expiry|exp|expiration)\s+date[:\s]+([A-Za-z]+\s+\d{4}|\d{4}-\d{2}-\d{2}|\d{2}/\d{4})', text, re.IGNORECASE)
+    m_exp = re.search(r'(?:expiry|exp|expiration)\s+date[:\s\n]+([A-Za-z0-9\-\/]+(?:\s+\d{4})?)', text, re.IGNORECASE)
     if m_exp:
         complaint["expiry_date"] = _parse_date_to_iso(m_exp.group(1))
 
-    # 7. Originating Site Block Inferencing
-    text_lower = text.lower()
-    if any(k in text_lower for k in ["injection", "vial", "sterile", "ampoule", "inj"]):
+    # 6. Originating Site Block
+    m_site_lbl = re.search(r'(?:Facility|Site|Originating)\s*(?:Block|Site)?[:\s\n]+(Block\s+[A-D][^\n\r]*)', text, re.IGNORECASE)
+    if m_site_lbl:
+        complaint["originating_site_block"] = m_site_lbl.group(1).strip()
+    elif any(k in text_lower for k in ["injection", "vial", "sterile", "ampoule", "inj"]):
         complaint["originating_site_block"] = "Block D - Sterile Injectables"
     elif any(k in text_lower for k in ["api", "synthesis", "raw material", "drum"]):
         complaint["originating_site_block"] = "Block C - API Synthesis"
     else:
         complaint["originating_site_block"] = "Block A - Solid Dosage"
 
-    # 8. Category
+    # 7. Category
     if "discolor" in text_lower or "yellow" in text_lower:
         complaint["complaint_category"] = "Product Defect - Discoloration"
-    elif "seal" in text_lower or "packaging" in text_lower:
+    elif "crack" in text_lower or "leak" in text_lower or "seal" in text_lower or "packaging" in text_lower:
         complaint["complaint_category"] = "Packaging Failure - Seal Integrity"
     elif "foreign matter" in text_lower or "particulate" in text_lower or "contam" in text_lower:
         complaint["complaint_category"] = "Contamination - Foreign Matter"

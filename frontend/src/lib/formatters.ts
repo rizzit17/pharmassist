@@ -1,7 +1,7 @@
-import type { ComplaintStatus, SeverityLevel } from '@/types/complaint'
+import type { ComplaintStatus } from '@/types/complaint'
 
 export const formatDate = (date?: string | null): string => {
-  if (!date) return '-'
+  if (!date) return '—'
   return new Date(date).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -10,7 +10,7 @@ export const formatDate = (date?: string | null): string => {
 }
 
 export const formatDateTime = (date?: string | null): string => {
-  if (!date) return '-'
+  if (!date) return '—'
   return new Date(date).toLocaleString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -35,32 +35,27 @@ export const getStatusLabel = (status: ComplaintStatus): string => {
 
 export const getStatusColor = (status: ComplaintStatus): string => {
   const colors: Record<ComplaintStatus, string> = {
-    draft: 'text-gray-600 bg-gray-100 border border-gray-200',
-    pending_triage: 'text-[#B7791F] bg-[#FEF6E7] border border-[#F5A524]/30',
-    ready_to_commit: 'text-[#1C9A4B] bg-[#E9F9EE] border border-[#22C55E]/30',
-    committed: 'text-[#2563EB] bg-[#EBF3FF] border border-[#3B82F6]/30',
-    under_investigation: 'text-[#B7791F] bg-[#FEF6E7] border border-[#F5A524]/30',
-    capa_assigned: 'text-[#5B4FE9] bg-[#E8E6FD] border border-[#5B4FE9]/30',
-    closed: 'text-gray-600 bg-gray-100 border border-gray-200',
+    draft: 'text-slate-600 bg-slate-100 dark:bg-slate-800 dark:text-slate-300',
+    pending_triage: 'text-amber-700 bg-amber-50 dark:bg-amber-950/50 dark:text-amber-300',
+    ready_to_commit: 'text-emerald-700 bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-300',
+    committed: 'text-indigo-700 bg-indigo-50 dark:bg-indigo-950/50 dark:text-indigo-300',
+    under_investigation: 'text-cyan-700 bg-cyan-50 dark:bg-cyan-950/50 dark:text-cyan-300',
+    capa_assigned: 'text-purple-700 bg-purple-50 dark:bg-purple-950/50 dark:text-purple-300',
+    closed: 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400',
   }
-  return colors[status] || 'text-gray-500 bg-gray-100'
+  return colors[status] || 'text-slate-500 bg-slate-100'
 }
 
 export const getSeverityColor = (severity?: string | null): string => {
   switch (severity) {
-    case 'Critical': return 'text-[#C0392B] bg-[#FDEDEC] border border-[#E74C3C]/30'
-    case 'Major': return 'text-[#B7791F] bg-[#FEF6E7] border border-[#F5A524]/30'
-    case 'Minor': return 'text-[#1C9A4B] bg-[#E9F9EE] border border-[#22C55E]/30'
-    default: return 'text-gray-500 bg-gray-100'
-  }
-}
-
-export const getSeverityDot = (severity?: string | null): string => {
-  switch (severity) {
-    case 'Critical': return 'bg-[#E74C3C]'
-    case 'Major': return 'bg-[#F5A524]'
-    case 'Minor': return 'bg-[#22C55E]'
-    default: return 'bg-gray-400'
+    case 'Critical':
+      return 'text-red-700 bg-red-50 dark:bg-red-950/60 dark:text-red-300'
+    case 'Major':
+      return 'text-amber-700 bg-amber-50 dark:bg-amber-950/60 dark:text-amber-300'
+    case 'Minor':
+      return 'text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300'
+    default:
+      return 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400'
   }
 }
 
@@ -73,16 +68,3 @@ export const formatFieldName = (field: string): string => {
 
 export const truncate = (str: string, maxLen: number): string =>
   str.length > maxLen ? str.slice(0, maxLen) + '...' : str
-
-export const getConfidenceColor = (score: number): string => {
-  if (score >= 0.8) return 'text-[#1C9A4B]'
-  if (score >= 0.6) return 'text-[#B7791F]'
-  return 'text-[#C0392B]'
-}
-
-export const getConfidenceLabel = (score: number): string => {
-  if (score >= 0.9) return 'High'
-  if (score >= 0.7) return 'Medium'
-  if (score >= 0.5) return 'Low'
-  return 'Very Low'
-}

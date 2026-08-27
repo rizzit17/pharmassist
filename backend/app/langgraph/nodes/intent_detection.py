@@ -39,6 +39,10 @@ async def intent_detection_node(state: ComplaintGraphState) -> dict:
     Never raises — on failure, sets intent to AMBIGUOUS and logs error.
     """
     try:
+        if state.get("uploaded_file_path") or state.get("intent") == "DOCUMENT_UPLOAD":
+            logger.info("Intent detected as DOCUMENT_UPLOAD from uploaded file: %s", state.get("uploaded_file_name"))
+            return {"intent": "DOCUMENT_UPLOAD"}
+
         user_msg = (state.get("user_message") or "").strip().lower()
         if user_msg in {"hi", "hello", "hey", "good morning", "good afternoon", "hi there", "hello there", "help", "who are you"}:
             return {"intent": "GENERAL_QUERY"}

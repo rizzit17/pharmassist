@@ -1,41 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { ArrowLeft, Shield, Clock, User, Bot, CheckCircle2, AlertTriangle, ChevronRight, Trash2 } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, Trash2, Sparkles } from 'lucide-react'
 import { complaintsApi, copilotApi } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { getStatusColor, getStatusLabel, getSeverityColor, formatDate, formatDateTime } from '@/lib/formatters'
 import type { Complaint, AuditLogOut } from '@/types/complaint'
 
-function Field({ label, value }: { label: string; value?: string | null }) {
-  return (
-    <div>
-      <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{label}</p>
-      <p className="text-sm text-gray-900 dark:text-white mt-0.5">{value || '-'}</p>
-    </div>
-  )
-}
-
 export default function ComplaintDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [complaint, setComplaint] = useState<Complaint | null>(null)
   const [auditTrail, setAuditTrail] = useState<AuditLogOut[]>([])
-  const [summary, setSummary] = useState<string | null>(null)
+  const [summary, setSummary] = useState('')
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [isSummaryLoading, setIsSummaryLoading] = useState(false)
 
   useEffect(() => {
     if (!id) return
     const load = async () => {
       try {
-        const [c, audit] = await Promise.all([
+        const [complaintData, auditData] = await Promise.all([
           complaintsApi.get(id),
-          complaintsApi.getAuditTrail(id),
+          complaintsApi.getAuditTrail(id).catch(() => []),
         ])
-        setComplaint(c)
-        setAuditTrail(audit)
+        setComplaint(complaintData)
+        setAuditTrail(auditData)
       } catch (err) {
         console.error(err)
       } finally {
@@ -46,51 +36,58 @@ export default function ComplaintDetailPage() {
   }, [id])
 
   const handleGenerateSummary = async () => {
-    if (!id) return
-    setIsSummaryLoading(true)
+    if (!complaint) return
+    setIsGeneratingSummary(true)
     try {
-      const res = await copilotApi.summary({ complaint_id: id })
+      const res = await copilotApi.summary({ complaint_id: complaint.id })
       setSummary(res.summary)
     } catch (err) {
       console.error(err)
     } finally {
-      setIsSummaryLoading(false)
+      setIsGeneratingSummary(false)
+    }
+  }
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!complaint) return
+    try {
+      const updated = await complaintsApi.update(complaint.id, { status: newStatus as any })
+      setComplaint(updated)
+      const freshAudit = await complaintsApi.getAuditTrail(complaint.id).catch(() => [])
+      setAuditTrail(freshAudit)
+    } catch (err) {
+      console.error(err)
     }
   }
 
   const handleDelete = async () => {
-    if (!id || !complaint) return
-    if (window.confirm(`Are you sure you want to delete complaint ${complaint.complaint_number}?`)) {
+    if (!complaint) return
+    if (window.confirm(`Delete complaint record ${complaint.complaint_number}?`)) {
       try {
-        await complaintsApi.delete(id)
+        await complaintsApi.delete(complaint.id)
         navigate('/complaints')
       } catch (err) {
-        console.error('Delete failed:', err)
+        console.error(err)
       }
     }
   }
 
   if (isLoading) {
     return (
-      <div className="p-6 max-w-5xl mx-auto space-y-4">
-        <div className="skeleton h-8 w-48 rounded" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 card p-6 space-y-4">
-            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-12 rounded" />)}
-          </div>
-          <div className="card p-6 space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton h-16 rounded" />)}
-          </div>
-        </div>
+      <div className="p-8 max-w-5xl mx-auto space-y-4">
+        <div className="skeleton h-8 w-48" />
+        <div className="skeleton h-64 w-full" />
       </div>
     )
   }
 
   if (!complaint) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-gray-500">Complaint not found.</p>
-        <Button variant="ghost" onClick={() => navigate('/complaints')} className="mt-4">← Back to list</Button>
+      <div className="p-8 max-w-5xl mx-auto text-center">
+        <p className="text-slate-400 font-medium">Complaint record not found.</p>
+        <Button variant="primary" className="mt-4" onClick={() => navigate('/complaints')}>
+          Back to Complaints
+        </Button>
       </div>
     )
   }
@@ -98,166 +95,209 @@ export default function ComplaintDetailPage() {
   const latestAnalysis = complaint.ai_analyses?.[complaint.ai_analyses.length - 1]
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-5">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <button onClick={() => navigate('/complaints')} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border text-gray-500">
-          <ArrowLeft className="w-4 h-4" />
-        </button>
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">{complaint.complaint_number}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{complaint.product_name} · {complaint.customer_name}</p>
+    <div className="p-5 sm:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/complaints')}
+            className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono">
+                {complaint.complaint_number}
+              </h1>
+              <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-medium', getStatusColor(complaint.status))}>
+                {getStatusLabel(complaint.status)}
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Logged {formatDateTime(complaint.created_at)}
+            </p>
+          </div>
         </div>
-        <div className="ml-auto flex items-center gap-3">
-          <span className={cn('text-xs px-3 py-1 rounded-full font-medium', getStatusColor(complaint.status))}>
-            {getStatusLabel(complaint.status)}
-          </span>
-          {latestAnalysis?.severity && (
-            <span className={cn('text-xs px-3 py-1 rounded-full font-medium', getSeverityColor(latestAnalysis.severity))}>
-              {latestAnalysis.severity}
-            </span>
-          )}
+
+        <div className="flex items-center gap-2">
+          <select
+            value={complaint.status}
+            onChange={(e) => handleStatusChange(e.target.value)}
+            className="text-xs font-semibold px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-indigo-500"
+          >
+            {['draft', 'pending_triage', 'ready_to_commit', 'committed', 'under_investigation', 'capa_assigned', 'closed'].map((s) => (
+              <option key={s} value={s}>{getStatusLabel(s as any)}</option>
+            ))}
+          </select>
+
           <Button
-            variant="danger"
+            variant="ghost"
             size="sm"
             onClick={handleDelete}
+            className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
             leftIcon={<Trash2 className="w-4 h-4" />}
           >
-            Delete Record
+            Delete
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Main fields */}
-        <div className="lg:col-span-2 space-y-5">
-          <div className="card p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">Origin & Customer Details</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Source" value={complaint.source} />
-              <Field label="Customer" value={complaint.customer_name} />
-            </div>
-          </div>
-          <div className="card p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">Product & Batch</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Product Name" value={complaint.product_name} />
-              <Field label="Strength / Grade" value={complaint.product_strength} />
-              <Field label="Batch / Lot" value={complaint.batch_lot_number} />
-              <Field label="Affected Quantity" value={complaint.affected_quantity} />
-              <Field label="Manufacturing Date" value={formatDate(complaint.manufacturing_date)} />
-              <Field label="Expiry Date" value={formatDate(complaint.expiry_date)} />
-            </div>
-          </div>
-          <div className="card p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">Defect Analysis</h3>
-            <div className="space-y-3">
-              <Field label="Complaint Category" value={complaint.complaint_category} />
+      {/* 2-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Left Column: Details (7 cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          {/* Product Info */}
+          <div className="card p-5 space-y-3">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              Product &amp; Batch
+            </h2>
+            <div className="grid grid-cols-2 gap-3 text-xs">
               <div>
-                <p className="text-xs font-medium text-gray-500 mb-1">Description</p>
-                <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{complaint.complaint_description || '-'}</p>
+                <p className="text-slate-400">Product Name</p>
+                <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{complaint.product_name || '—'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Strength</p>
+                <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{complaint.product_strength || '—'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Batch / Lot Number</p>
+                <p className="font-mono font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">{complaint.batch_lot_number || '—'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Affected Quantity</p>
+                <p className="font-mono font-semibold text-slate-900 dark:text-white mt-0.5">{complaint.affected_quantity || '—'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Manufacturing Date</p>
+                <p className="text-slate-700 dark:text-slate-300 mt-0.5">{formatDate(complaint.manufacturing_date)}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Expiry Date</p>
+                <p className="text-slate-700 dark:text-slate-300 mt-0.5">{formatDate(complaint.expiry_date)}</p>
               </div>
             </div>
           </div>
 
-          {/* Executive summary */}
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Executive Summary</h3>
-              <Button variant="outline" size="sm" isLoading={isSummaryLoading} onClick={handleGenerateSummary}>
-                Generate AI Summary
-              </Button>
+          {/* Customer Info */}
+          <div className="card p-5 space-y-3">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              Customer &amp; Origin
+            </h2>
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <p className="text-slate-400">Customer Name</p>
+                <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{complaint.customer_name || '—'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Channel</p>
+                <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{complaint.source || '—'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Site Block</p>
+                <p className="text-slate-700 dark:text-slate-300 mt-0.5">{complaint.originating_site_block || '—'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Packaging Material (NPM)</p>
+                <p className="text-slate-700 dark:text-slate-300 mt-0.5">{complaint.impacted_npm || '—'}</p>
+              </div>
             </div>
-            {summary ? (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
-              >
-                {summary}
-              </motion.p>
-            ) : (
-              <p className="text-sm text-gray-400 italic">Click "Generate AI Summary" to create an executive summary.</p>
-            )}
+          </div>
+
+          {/* Description */}
+          <div className="card p-5 space-y-2">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              Complaint Description
+            </h2>
+            <p className="text-xs leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
+              {complaint.complaint_description || 'No description provided.'}
+            </p>
+          </div>
+
+          {/* Audit Trail */}
+          <div className="card p-5 space-y-3">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              Audit Trail (21 CFR Part 11)
+            </h2>
+            <div className="space-y-2.5">
+              {auditTrail.map((entry, idx) => (
+                <div key={idx} className="flex items-start gap-2 text-xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-medium text-slate-800 dark:text-slate-200">
+                      <span className="font-semibold">{entry.action_type || 'Update'}</span> by {entry.actor_name || entry.actor || 'QA Officer'}
+                      {entry.field_name && <span className="text-slate-400 ml-1">({entry.field_name})</span>}
+                    </p>
+                    <p className="text-[11px] text-slate-400">{formatDateTime(entry.created_at)}</p>
+                  </div>
+                </div>
+              ))}
+              {auditTrail.length === 0 && (
+                <p className="text-xs text-slate-400 italic">Initial record created.</p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Sidebar: Risk + Audit trail */}
-        <div className="space-y-5">
-          {/* Risk Assessment */}
+        {/* Right Column: AI Risk Assessment & Summary (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
           {latestAnalysis && (
-            <div className="risk-assessment-card">
-              <div className="flex items-center gap-2 mb-3">
-                <Shield className="w-4 h-4 text-primary-600" />
-                <span className="text-xs font-bold uppercase tracking-wider text-primary-700">Risk Assessment</span>
+            <div className="card p-5 space-y-3 bg-indigo-50/40 dark:bg-indigo-950/30">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
+                  AI Risk Assessment
+                </span>
+                <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-semibold', getSeverityColor(latestAnalysis.severity))}>
+                  {latestAnalysis.severity || '—'}
+                </span>
               </div>
-              <div className="space-y-3">
-                {latestAnalysis.regulatory_reportable && (
-                  <div className="flex items-center gap-1.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-2.5 py-2">
-                    <AlertTriangle className="w-3 h-3" />
-                    May require regulatory notification
-                  </div>
-                )}
+
+              {latestAnalysis.regulatory_reportable && (
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300 border border-red-200 text-xs font-medium">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                  Potential regulatory reportable event
+                </div>
+              )}
+
+              <div className="space-y-2 text-xs">
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Suggested Action</p>
-                  <p className="text-xs text-gray-800 dark:text-gray-200">{latestAnalysis.suggested_next_action}</p>
+                  <p className="text-slate-500 font-medium">Suggested Action</p>
+                  <p className="text-slate-900 dark:text-white font-medium mt-0.5">{latestAnalysis.suggested_next_action || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Risk Narrative</p>
-                  <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{latestAnalysis.initial_risk_assessment}</p>
+                  <p className="text-slate-500 font-medium">Risk Assessment</p>
+                  <p className="text-slate-700 dark:text-slate-300 mt-0.5 leading-relaxed">{latestAnalysis.initial_risk_assessment || '—'}</p>
                 </div>
-                {latestAnalysis.capa_suggestions && latestAnalysis.capa_suggestions.length > 0 && (
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 mb-1">CAPA Steps</p>
-                    <ul className="space-y-1">
-                      {latestAnalysis.capa_suggestions.map((step: string, i: number) => (
-                        <li key={i} className="flex items-start gap-1.5 text-xs text-gray-700 dark:text-gray-300">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-500 mt-0.5 flex-shrink-0" />
-                          {step}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
             </div>
           )}
 
-          {/* Audit trail */}
-          <div className="card p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4 flex items-center gap-2">
-              <Clock className="w-3.5 h-3.5" />
-              Audit Trail
-            </h3>
-            {auditTrail.length === 0 ? (
-              <p className="text-xs text-gray-400 italic">No audit events yet.</p>
-            ) : (
-              <div className="space-y-3">
-                {auditTrail.map((log, i) => (
-                  <div key={log.id} className="flex items-start gap-2">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-gray-100 dark:bg-dark-border">
-                      {log.actor === 'ai'
-                        ? <Bot className="w-3 h-3 text-primary-600" />
-                        : <User className="w-3 h-3 text-gray-600" />
-                      }
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-gray-800 dark:text-gray-200">
-                        {log.action_type.replace(/_/g, ' ')}
-                        {log.field_name && <span className="text-gray-500"> · {log.field_name.replace(/_/g, ' ')}</span>}
-                      </p>
-                      {log.old_value && log.new_value && (
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          <span className="line-through">{String(log.old_value).slice(0, 30)}</span>
-                          {' → '}
-                          <span className="text-emerald-600">{String(log.new_value).slice(0, 30)}</span>
-                        </p>
-                      )}
-                      <p className="text-xs text-gray-400 mt-0.5">{formatDateTime(log.created_at)}</p>
-                    </div>
-                  </div>
-                ))}
+          {/* Executive Summary */}
+          <div className="card p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Executive Briefing
+              </h2>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleGenerateSummary}
+                isLoading={isGeneratingSummary}
+                leftIcon={<Sparkles className="w-3.5 h-3.5" />}
+              >
+                Generate
+              </Button>
+            </div>
+
+            {summary ? (
+              <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">
+                {summary}
               </div>
+            ) : (
+              <p className="text-xs text-slate-400 italic py-2">
+                Click "Generate" to synthesize an executive summary.
+              </p>
             )}
           </div>
         </div>

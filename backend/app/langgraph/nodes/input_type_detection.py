@@ -37,7 +37,7 @@ async def input_type_detection_node(state: ComplaintGraphState) -> dict:
         uploaded_path = state.get("uploaded_file_path")
         uploaded_name = state.get("uploaded_file_name", "")
 
-        if not uploaded_path or state.get("intent") not in ("DOCUMENT_UPLOAD",):
+        if not uploaded_path:
             # Pure text input — no file processing needed
             return {
                 "input_type": "text",

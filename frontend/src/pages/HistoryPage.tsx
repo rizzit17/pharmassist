@@ -1,66 +1,105 @@
 import React from 'react'
-import { MessageSquare, ArrowRight } from 'lucide-react'
+import { MessageSquare, ArrowRight, Clock } from 'lucide-react'
 import { useAppSelector } from '@/app/hooks'
 import { formatDate } from '@/lib/formatters'
-import { Button } from '@/components/ui/Button'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/Button'
 
 export default function HistoryPage() {
   const navigate = useNavigate()
   const messages = useAppSelector((s) => s.chat.messages)
-  const sessionId = useAppSelector((s) => s.chat.sessionId)
+  const sessionId = useAppSelector((s) => s.complaint.sessionId)
+  const draft = useAppSelector((s) => s.complaint.draft)
+
+  const activeSessions = sessionId
+    ? [
+        {
+          id: sessionId,
+          title: draft.product_name ? `${draft.product_name} Investigation` : 'Active Complaint Session',
+          complaintNumber: draft.batch_lot_number ? `Batch: ${draft.batch_lot_number}` : 'Draft Specimen',
+          date: new Date().toISOString(),
+          messageCount: messages.length,
+          preview: messages[messages.length - 1]?.content || 'Session in progress…',
+        },
+      ]
+    : []
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="p-5 sm:p-8 max-w-4xl mx-auto space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#0F0E17] dark:text-white">Session &amp; Chat History</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">LangGraph checkpointer session logs</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Session History
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Active and archived LangGraph conversation states
+          </p>
         </div>
+
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => navigate('/complaints/new')}
+        >
+          New Session
+        </Button>
       </div>
 
-      <div className="card p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-gray-100 dark:border-dark-border pb-4">
-          <div className="flex items-center gap-3">
-            <div className="icon-chip icon-chip-accent">
-              <MessageSquare className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-bold text-[#0F0E17] dark:text-white">
-                  Active Session: <span className="font-mono-data text-[#5B4FE9]">{sessionId || 'default'}</span>
-                </p>
-                <span className="pill pill-ready">
-                  <span className="pill-dot" />
-                  Current Live Thread
+      {activeSessions.length > 0 ? (
+        <div className="space-y-3">
+          {activeSessions.map((session) => (
+            <div
+              key={session.id}
+              className="card p-5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+                    {session.title}
+                  </h2>
+                  <span className="text-xs text-slate-400 font-mono">
+                    {session.complaintNumber}
+                  </span>
+                </div>
+                <span className="text-xs text-slate-400 font-medium">
+                  {formatDate(session.date)} · {session.messageCount} messages
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-0.5">{messages.length} messages exchanged in this session</p>
-            </div>
-          </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate('/copilot')}
-            rightIcon={<ArrowRight className="w-4 h-4" />}
-          >
-            Open Copilot
-          </Button>
-        </div>
-
-        <div className="space-y-3 pt-2">
-          {messages.map((m, idx) => (
-            <div key={m.id || idx} className="p-3.5 bg-[#FAFAFB] dark:bg-dark-bg rounded-xl border border-[#E7E5F5] dark:border-dark-border">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="eyebrow-label">{m.role}</span>
-                <span className="text-xs text-gray-400 font-mono-data">{formatDate(m.timestamp)}</span>
+              <div className="my-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 text-xs text-slate-600 dark:text-slate-300">
+                {session.preview.replace(/\*\*/g, '').slice(0, 160)}…
               </div>
-              <p className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{m.content || '[File / Processing message]'}</p>
+
+              <div className="flex justify-end">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => navigate('/complaints/new')}
+                  rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                >
+                  Resume Session
+                </Button>
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      ) : (
+        <div className="card p-12 text-center">
+          <MessageSquare className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+          <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            No Previous Sessions
+          </h2>
+          <p className="text-xs text-slate-400 mt-1">
+            New copilot conversation threads will appear here.
+          </p>
+          <div className="mt-4">
+            <Button variant="primary" size="sm" onClick={() => navigate('/complaints/new')}>
+              Start New Complaint
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

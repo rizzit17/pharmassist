@@ -21,25 +21,25 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const base =
-    'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none'
+    'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none'
 
   const variants = {
     primary:
-      'bg-gradient-to-r from-primary-600 to-violet-600 text-white hover:from-primary-700 hover:to-violet-700 shadow-sm hover:shadow-md focus:ring-primary-500',
+      'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm focus:ring-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500',
     secondary:
-      'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 shadow-sm focus:ring-gray-300 dark:bg-dark-surface dark:text-dark-text-bright dark:border-dark-border dark:hover:bg-dark-border',
+      'bg-white text-slate-700 border border-slate-200 shadow-sm hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700 focus:ring-slate-400',
     ghost:
-      'text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-gray-300 dark:text-dark-text dark:hover:text-dark-text-bright dark:hover:bg-dark-border',
+      'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 focus:ring-slate-300',
     danger:
-      'bg-red-600 text-white hover:bg-red-700 shadow-sm focus:ring-red-500',
+      'bg-red-600 hover:bg-red-700 text-white shadow-sm focus:ring-red-500',
     outline:
-      'border border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500 dark:border-dark-accent dark:text-dark-accent dark:hover:bg-primary-950/30',
+      'border border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800 focus:ring-slate-400',
   }
 
   const sizes = {
     sm: 'px-3 py-1.5 text-xs',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base',
+    md: 'px-3.5 py-2 text-sm',
+    lg: 'px-5 py-2.5 text-base',
   }
 
   return (

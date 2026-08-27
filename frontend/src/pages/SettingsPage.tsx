@@ -1,192 +1,183 @@
 import React, { useState } from 'react'
-import { Shield, Cpu, CheckCircle, Save, User as UserIcon, Check } from 'lucide-react'
+import { CheckCircle, Save, Moon, Sun } from 'lucide-react'
 import { useAppSelector, useAppDispatch } from '@/app/hooks'
 import { toggleTheme } from '@/features/settings/themeSlice'
-import { updateUser } from '@/features/auth/authSlice'
 import { Button } from '@/components/ui/Button'
+import { cn } from '@/lib/utils'
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch()
-  const isDark = useAppSelector((s) => s.theme.isDark)
   const user = useAppSelector((s) => s.auth.user)
+  const isDark = useAppSelector((s) => s.theme.isDark)
 
-  // Local state for profile form
-  const [name, setName] = useState(user?.name || 'Demo QA Officer')
-  const [role, setRole] = useState(user?.role || 'qa_officer')
-  const [savedSuccess, setSavedSuccess] = useState(false)
+  const [primaryModel, setPrimaryModel] = useState('groq-llama-3.3-70b-versatile')
+  const [reasoningModel, setReasoningModel] = useState('groq-llama-3.1-8b-instant')
+  const [ocrEngine, setOcrEngine] = useState('tesseract-ocr')
+  const [saved, setSaved] = useState(false)
 
-  // Model selection state
-  const [primaryModel, setPrimaryModel] = useState(
-    localStorage.getItem('pharmassist_primary_model') || 'llama-3.1-8b-instant'
-  )
-  const [secondaryModel, setSecondaryModel] = useState(
-    localStorage.getItem('pharmassist_secondary_model') || 'llama-3.3-70b-versatile'
-  )
-
-  const handleSaveProfile = (e: React.FormEvent) => {
-    e.preventDefault()
-    dispatch(updateUser({ name, role }))
-    localStorage.setItem('pharmassist_primary_model', primaryModel)
-    localStorage.setItem('pharmassist_secondary_model', secondaryModel)
-    setSavedSuccess(true)
-    setTimeout(() => setSavedSuccess(false), 3000)
+  const handleSave = () => {
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-[#0F0E17] dark:text-white">Settings</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">System configuration and AI model routing</p>
-      </div>
-
-      <div className="space-y-4">
-        {/* User Profile Settings */}
-        <div className="card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="icon-chip icon-chip-accent">
-                <Shield className="w-5 h-5" />
-              </div>
-              <h3 className="text-sm font-bold text-[#0F0E17] dark:text-white">User Profile</h3>
-            </div>
-            {savedSuccess && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-[#E9F9EE] text-[#1C9A4B] border border-[#22C55E]/30">
-                <Check className="w-3.5 h-3.5 text-[#22C55E]" />
-                Profile Updated Successfully
-              </span>
-            )}
-          </div>
-
-          <form onSubmit={handleSaveProfile} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none"
-                    placeholder="Enter your name"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  User Role
-                </label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-bg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none"
-                >
-                  <option value="qa_officer">QA Officer</option>
-                  <option value="qa_manager">QA Manager</option>
-                  <option value="regulatory_specialist">Regulatory Specialist</option>
-                  <option value="qa_inspector">QA Inspector</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  disabled
-                  value={user?.email || 'demo@pharmassist.com'}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-border bg-gray-100 dark:bg-dark-border/40 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Authentication Status
-                </label>
-                <div className="h-[38px] flex items-center">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-[#E9F9EE] text-[#1C9A4B] border border-[#22C55E]/30">
-                    <CheckCircle className="w-3.5 h-3.5 text-[#22C55E]" />
-                    JWT Authentication Active
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <Button
-                type="submit"
-                variant="primary"
-                size="sm"
-                leftIcon={<Save className="w-4 h-4" />}
-              >
-                Save Profile Changes
-              </Button>
-            </div>
-          </form>
+    <div className="p-5 sm:p-8 max-w-4xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Settings
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            User profile, interface preferences, and model configuration
+          </p>
         </div>
 
-        {/* AI Routing */}
-        <div className="card p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="icon-chip icon-chip-accent">
-              <Cpu className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-[#0F0E17] dark:text-white">LangGraph AI Model Routing</h3>
-          </div>
-          <div className="space-y-4 text-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-[#FAFAFB] dark:bg-dark-bg rounded-lg gap-3 border border-[#E7E5F5] dark:border-dark-border">
-              <div>
-                <p className="font-semibold text-[#0F0E17] dark:text-white">Primary Extraction &amp; Intent Model</p>
-                <p className="text-xs text-gray-500">Lightweight fast inference via Groq for initial field parsing</p>
-              </div>
-              <select
-                value={primaryModel}
-                onChange={(e) => {
-                  setPrimaryModel(e.target.value)
-                  localStorage.setItem('pharmassist_primary_model', e.target.value)
-                }}
-                className="font-mono-data bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-[#5B4FE9] dark:text-dark-accent px-3 py-1.5 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-              >
-                <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Fastest)</option>
-                <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (High Precision)</option>
-                <option value="mixtral-8x7b-32768">mixtral-8x7b-32768 (MoE Architecture)</option>
-              </select>
+        <Button
+          variant="primary"
+          size="md"
+          leftIcon={<Save className="w-4 h-4" />}
+          onClick={handleSave}
+        >
+          {saved ? 'Saved' : 'Save Changes'}
+        </Button>
+      </div>
+
+      {saved && (
+        <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-semibold">
+          <CheckCircle className="w-4 h-4 text-emerald-600" />
+          Settings updated successfully.
+        </div>
+      )}
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* User Profile */}
+        <div className="card p-5 space-y-4">
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            User Profile
+          </h2>
+
+          <div className="space-y-3 text-xs">
+            <div>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Name</label>
+              <input
+                type="text"
+                readOnly
+                value={user?.name || 'QA Specialist'}
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-medium"
+              />
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-[#FAFAFB] dark:bg-dark-bg rounded-lg gap-3 border border-[#E7E5F5] dark:border-dark-border">
-              <div>
-                <p className="font-semibold text-[#0F0E17] dark:text-white">Complex Risk Analysis Model</p>
-                <p className="text-xs text-gray-500">High-capacity reasoning for regulatory &amp; severity evaluation</p>
-              </div>
-              <select
-                value={secondaryModel}
-                onChange={(e) => {
-                  setSecondaryModel(e.target.value)
-                  localStorage.setItem('pharmassist_secondary_model', e.target.value)
-                }}
-                className="font-mono-data bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-[#5B4FE9] dark:text-violet-400 px-3 py-1.5 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none"
-              >
-                <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Default)</option>
-                <option value="llama-3.1-70b-versatile">llama-3.1-70b-versatile</option>
-                <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
-              </select>
+            <div>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Email</label>
+              <input
+                type="email"
+                readOnly
+                value={user?.email || 'qa@pharmassist.io'}
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Role</label>
+              <input
+                type="text"
+                readOnly
+                value={user?.role || 'QA Specialist'}
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-medium"
+              />
             </div>
           </div>
         </div>
 
         {/* Theme Settings */}
-        <div className="card p-5 flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-[#0F0E17] dark:text-white">Interface Theme</h3>
-            <p className="text-xs text-gray-500">Switch between Tokyo Night Dark mode and Clean Light mode</p>
+        <div className="card p-5 space-y-4">
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Appearance
+          </h2>
+
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <button
+              onClick={() => isDark && dispatch(toggleTheme())}
+              className={cn(
+                'p-3.5 rounded-lg border text-left transition-colors relative',
+                !isDark
+                  ? 'border-indigo-600 bg-indigo-50/40'
+                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300'
+              )}
+            >
+              <Sun className="w-5 h-5 text-amber-500 mb-2" />
+              <p className="text-xs font-semibold text-slate-900 dark:text-white">Light Mode</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Crisp daytime theme</p>
+            </button>
+
+            <button
+              onClick={() => !isDark && dispatch(toggleTheme())}
+              className={cn(
+                'p-3.5 rounded-lg border text-left transition-colors relative',
+                isDark
+                  ? 'border-indigo-500 bg-indigo-950/30'
+                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300'
+              )}
+            >
+              <Moon className="w-5 h-5 text-indigo-400 mb-2" />
+              <p className="text-xs font-semibold text-slate-900 dark:text-white">Dark Mode</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Low-light theme</p>
+            </button>
           </div>
-          <Button variant="secondary" onClick={() => dispatch(toggleTheme())}>
-            {isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          </Button>
+        </div>
+
+        {/* AI Model Routing (Full Width) */}
+        <div className="md:col-span-2 card p-5 space-y-4">
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            AI Model Routing
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Extraction Model
+              </label>
+              <select
+                value={primaryModel}
+                onChange={(e) => setPrimaryModel(e.target.value)}
+                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+              >
+                <option value="groq-llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+                <option value="groq-llama-3.1-70b-versatile">llama-3.1-70b-versatile</option>
+                <option value="groq-mixtral-8x7b-32768">mixtral-8x7b-32768</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Risk Classification Model
+              </label>
+              <select
+                value={reasoningModel}
+                onChange={(e) => setReasoningModel(e.target.value)}
+                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+              >
+                <option value="groq-llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+                <option value="groq-llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                OCR Engine
+              </label>
+              <select
+                value={ocrEngine}
+                onChange={(e) => setOcrEngine(e.target.value)}
+                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+              >
+                <option value="tesseract-ocr">Tesseract OCR v5</option>
+                <option value="pdfplumber">pdfplumber Text Engine</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     </div>

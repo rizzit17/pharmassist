@@ -70,6 +70,8 @@ aivoa.db
 *.log
 logs/
 
-# Submission Archives
+# Submission Archives & Large Media
 *.zip
 AIVOA_PharmAssist_Submission.zip
+*.mp4
+*.mov

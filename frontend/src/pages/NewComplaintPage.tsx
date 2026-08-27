@@ -1,60 +1,55 @@
 import React, { useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { applyAIResponse, resetDraft, markCommitted, setIsCommitting } from '@/features/complaints/complaintSlice'
 import { addUserMessage, addProcessingIndicator, addAssistantMessage, setProcessingError, addFileProgressMessage } from '@/features/copilot/chatSlice'
 import { copilotApi, complaintsApi } from '@/lib/api'
-import { useHighlightOnChange } from '@/hooks/useHighlightOnChange'
 import { useAutoScroll } from '@/hooks/useAutoScroll'
 import { useFileUpload } from '@/hooks/useFileUpload'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import {
-  Shield, Send, Paperclip, RotateCcw, CheckCircle,
-  AlertTriangle, Info, FileText, ChevronDown, Zap, FlaskConical
+  Send, Paperclip, RotateCcw, CheckCircle,
+  AlertTriangle, ChevronDown, Bot, Sparkles, FileText
 } from 'lucide-react'
 import type { ChatMessage } from '@/types/copilot'
 
-// ── Field component with AI highlight ─────────────────────────────
+// ── Form Input Field ──────────────────────────────────────────────
 function FormField({
-  label, value, placeholder, updatedFields, fieldName, type = 'text', options, isTextarea
+  label, value, placeholder, type = 'text', options, isTextarea, isMonospace = false
 }: {
   label: string
   value?: string
   placeholder: string
-  updatedFields: string[]
-  fieldName: string
+  fieldName?: string
   type?: string
   options?: string[]
   isTextarea?: boolean
+  isMonospace?: boolean
 }) {
-  const isHighlighted = useHighlightOnChange(fieldName, updatedFields)
   const isEmpty = !value
 
   const inputClass = cn(
-    'w-full px-3 py-2 text-sm rounded-lg border transition-all duration-300 outline-none',
-    'dark:bg-dark-bg dark:text-dark-text-bright',
-    isHighlighted
-      ? 'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-500'
-      : 'bg-white border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 dark:border-dark-border',
-    isEmpty ? 'text-gray-400 italic' : 'text-gray-900'
+    'w-full px-3 py-2 text-xs rounded-lg border transition-colors outline-none',
+    'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500',
+    isMonospace && 'font-mono',
+    isEmpty ? 'text-slate-400 placeholder:text-slate-400 italic' : 'text-slate-900 dark:text-white font-medium'
   )
 
   if (options) {
     return (
       <div>
-        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{label}</label>
+        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">{label}</label>
         <div className="relative">
           <select
-            className={cn(inputClass, 'appearance-none pr-8')}
+            className={cn(inputClass, 'appearance-none pr-8 cursor-not-allowed')}
             value={value || ''}
             disabled
           >
-            <option value="" className="text-gray-400 italic">{placeholder}</option>
+            <option value="" className="text-slate-400 italic">{placeholder}</option>
             {options.map(o => <option key={o} value={o}>{o}</option>)}
           </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
         </div>
       </div>
     )
@@ -63,9 +58,9 @@ function FormField({
   if (isTextarea) {
     return (
       <div>
-        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{label}</label>
+        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">{label}</label>
         <textarea
-          className={cn(inputClass, 'resize-none h-24')}
+          className={cn(inputClass, 'resize-none h-24 leading-relaxed font-sans')}
           value={value || ''}
           placeholder={placeholder}
           readOnly
@@ -76,7 +71,7 @@ function FormField({
 
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{label}</label>
+      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">{label}</label>
       <input
         type={type}
         className={inputClass}
@@ -88,49 +83,31 @@ function FormField({
   )
 }
 
-// ── Status Pill ──────────────────────────────────────────────────
-function StatusPill({ status }: { status: string }) {
-  const configs = {
-    pending_triage: { label: 'Pending Triage', cls: 'pill-pending', dot: 'bg-amber-500' },
-    ready_to_commit: { label: 'Ready to Commit', cls: 'pill-ready', dot: 'bg-emerald-500' },
-    committed: { label: 'Committed', cls: 'pill-committed', dot: 'bg-indigo-500' },
-    draft: { label: 'Draft', cls: 'text-gray-500 bg-gray-100 border border-gray-200 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold', dot: 'bg-gray-400' },
-  }
-  const cfg = configs[status as keyof typeof configs] || configs.draft
-  return (
-    <span className={cfg.cls}>
-      <span className={cn('w-1.5 h-1.5 rounded-full animate-pulse', cfg.dot)} />
-      {cfg.label}
-    </span>
-  )
-}
-
 // ── Chat Message Bubble ───────────────────────────────────────────
 function MessageBubble({ msg }: { msg: ChatMessage }) {
   if (msg.isProcessing) {
     return (
-      <div className="flex items-start gap-2 mb-4">
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-violet-500 flex items-center justify-center flex-shrink-0">
-          <Zap className="w-3.5 h-3.5 text-white" />
+      <div className="flex items-start gap-2.5 mb-3">
+        <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0">
+          <Bot className="w-3.5 h-3.5" />
         </div>
-        <div className="chat-bubble-ai px-4 py-3 max-w-xs">
+        <div className="card px-3.5 py-2.5 max-w-xs text-xs">
           {msg.progressValue !== undefined ? (
             <div>
-              <p className="text-xs text-gray-600 mb-2">Processing document...</p>
-              <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <motion.div
-                  className="progress-bar-fill h-full"
-                  initial={{ width: '0%' }}
-                  animate={{ width: `${msg.progressValue}%` }}
+              <p className="font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                Analyzing document ({msg.progressValue}%)
+              </p>
+              <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-indigo-600 transition-all duration-300"
+                  style={{ width: `${msg.progressValue}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-1">{msg.progressValue}%</p>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 py-1">
-              <span className="typing-dot" />
-              <span className="typing-dot" />
-              <span className="typing-dot" />
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+              <span className="text-slate-500">Processing input...</span>
             </div>
           )}
         </div>
@@ -140,17 +117,10 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
 
   if (msg.isFileUpload) {
     return (
-      <div className="flex justify-end mb-4">
-        <div className="chat-bubble-user px-4 py-3 max-w-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center">
-              <FileText className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <p className="text-xs font-medium text-white">{msg.attachedFileName}</p>
-              <p className="text-xs text-white/70">PDF Document</p>
-            </div>
-          </div>
+      <div className="flex justify-end mb-3">
+        <div className="bg-indigo-600 text-white px-3.5 py-2 rounded-lg text-xs flex items-center gap-2 max-w-xs">
+          <FileText className="w-4 h-4 text-indigo-200" />
+          <span className="truncate">{msg.attachedFileName}</span>
         </div>
       </div>
     )
@@ -158,23 +128,21 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
 
   if (msg.role === 'user') {
     return (
-      <div className="flex justify-end mb-4">
-        <div className="chat-bubble-user px-4 py-3 max-w-sm">
-          <p className="text-sm text-white whitespace-pre-wrap">{msg.content}</p>
+      <div className="flex justify-end mb-3">
+        <div className="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl rounded-tr-none text-xs leading-relaxed max-w-sm">
+          <p className="whitespace-pre-wrap">{msg.content}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex items-start gap-2 mb-4">
-      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-violet-500 flex items-center justify-center flex-shrink-0 shadow-sm">
-        <Zap className="w-3.5 h-3.5 text-white" />
+    <div className="flex items-start gap-2.5 mb-3">
+      <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0">
+        <Bot className="w-3.5 h-3.5" />
       </div>
-      <div className="chat-bubble-ai px-4 py-3 max-w-sm">
-        <p className="text-sm text-gray-800 dark:text-dark-text-bright whitespace-pre-wrap">
-          {msg.content ? msg.content.replace(/\*\*/g, '') : ''}
-        </p>
+      <div className="card px-3.5 py-2.5 rounded-xl rounded-tl-none text-xs leading-relaxed max-w-sm text-slate-800 dark:text-slate-200">
+        <p className="whitespace-pre-wrap">{msg.content ? msg.content.replace(/\*\*/g, '') : ''}</p>
       </div>
     </div>
   )
@@ -185,8 +153,6 @@ export default function NewComplaintPage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const draft = useAppSelector((s) => s.complaint.draft)
-  const updatedFields = useAppSelector((s) => s.complaint.updatedFields)
-  const statusPill = useAppSelector((s) => s.complaint.statusPill)
   const riskAssessment = useAppSelector((s) => s.complaint.riskAssessment)
   const completeness = useAppSelector((s) => s.complaint.completeness)
   const duplicateWarning = useAppSelector((s) => s.complaint.duplicateWarning)
@@ -226,23 +192,16 @@ export default function NewComplaintPage() {
       }))
       dispatch(addAssistantMessage(res.assistant_message))
     } catch (err: any) {
-      dispatch(setProcessingError(err.message || 'AI service unavailable. Please try again.'))
+      dispatch(setProcessingError(err.message || 'AI service unavailable.'))
     }
   }
 
   const handleFileUpload = useCallback(async (file: File) => {
-    dispatch(addUserMessage({ content: `[Uploading: ${file.name}]`, attachedFileName: file.name }))
-    dispatch(addFileProgressMessage({ fileName: file.name, progress: 10 }))
+    dispatch(addUserMessage({ content: `[Uploaded: ${file.name}]`, attachedFileName: file.name }))
+    dispatch(addFileProgressMessage({ fileName: file.name, progress: 20 }))
 
     try {
-      // Simulate progress
-      const progressTimer = setInterval(() => {
-        dispatch(addFileProgressMessage({ fileName: file.name, progress: Math.min(90, Math.random() * 30 + 30) }))
-      }, 800)
-
       const res = await copilotApi.upload(file, sessionId || undefined)
-      clearInterval(progressTimer)
-
       dispatch(applyAIResponse({
         complaint: res.complaint || {},
         updated_fields: res.updated_fields,
@@ -255,15 +214,13 @@ export default function NewComplaintPage() {
       }))
       dispatch(addAssistantMessage(res.assistant_message))
     } catch (err: any) {
-      dispatch(setProcessingError(err.message || 'File processing failed. Please try again.'))
+      dispatch(setProcessingError(err.message || 'File processing failed.'))
     }
   }, [dispatch, sessionId])
 
   const { inputRef, handleFileInput, handleDrop, handleDragOver, openFilePicker } = useFileUpload(
     handleFileUpload,
-    {
-      onError: (msg) => dispatch(setProcessingError(msg))
-    }
+    { onError: (msg) => dispatch(setProcessingError(msg)) }
   )
 
   const handleCommit = async () => {
@@ -289,217 +246,156 @@ export default function NewComplaintPage() {
 
   const canCommit = completeness?.is_complete && !!riskAssessment?.severity
 
-  // Severity badge
-  const severityColors: Record<string, string> = {
-    Critical: 'text-red-700 bg-red-50 border border-red-200',
-    Major: 'text-orange-700 bg-orange-50 border border-orange-200',
-    Minor: 'text-yellow-700 bg-yellow-50 border border-yellow-200',
-  }
-
   return (
     <div className="h-full flex flex-col">
       {/* Mobile tab switcher */}
-      <div className="lg:hidden flex border-b border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface">
+      <div className="lg:hidden flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101420]">
         {(['form', 'copilot'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={cn(
-              'flex-1 py-3 text-sm font-medium capitalize transition-colors',
+              'flex-1 py-3 text-xs font-semibold transition-colors',
               activeTab === tab
-                ? 'text-primary-600 border-b-2 border-primary-600'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'text-indigo-600 border-b-2 border-indigo-600'
+                : 'text-slate-500'
             )}
           >
-            {tab === 'form' ? 'Form' : 'Copilot'}
+            {tab === 'form' ? 'Complaint Form' : 'AI Copilot'}
           </button>
         ))}
       </div>
 
       {/* Two-pane layout */}
       <div className="flex-1 flex overflow-hidden">
-        {/* LEFT PANE - Complaint Form */}
+        {/* LEFT PANE - Clean Complaint Form */}
         <div className={cn(
-          'flex flex-col w-full lg:w-[55%] border-r border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface overflow-y-auto',
+          'flex flex-col w-full lg:w-[56%] border-r border-slate-200 dark:border-slate-800 bg-[#F8FAFC] dark:bg-[#0C0F17] overflow-y-auto',
           activeTab !== 'form' && 'hidden lg:flex'
         )}>
           {/* Form header */}
-          <div className="px-6 py-5 border-b border-gray-100 dark:border-dark-border">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Log Customer Complaint</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">API & FDF Quality Assurance Module</p>
-              </div>
-              <StatusPill status={statusPill} />
+          <div className="px-6 py-4 bg-white dark:bg-[#101420] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10 flex items-center justify-between">
+            <div>
+              <h1 className="text-lg font-bold text-slate-900 dark:text-white">
+                Log New Complaint
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Fields are automatically populated by AI Copilot on the right
+              </p>
             </div>
+            {riskAssessment?.severity && (
+              <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-semibold', {
+                'text-red-700 bg-red-50 dark:bg-red-950/60 dark:text-red-300': riskAssessment.severity === 'Critical',
+                'text-amber-700 bg-amber-50 dark:bg-amber-950/60 dark:text-amber-300': riskAssessment.severity === 'Major',
+                'text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300': riskAssessment.severity === 'Minor',
+              })}>
+                {riskAssessment.severity}
+              </span>
+            )}
           </div>
 
           {/* Form body */}
-          <div className="flex-1 px-6 py-5 space-y-6">
-            {/* Duplicate warning */}
+          <div className="flex-1 p-6 space-y-4">
             {duplicateWarning?.found && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl"
-              >
+              <div className="flex items-start gap-3 p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 dark:bg-amber-950/50 dark:border-amber-800 dark:text-amber-200">
                 <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-amber-800">Possible duplicate detected</p>
+                  <p className="font-semibold">Possible Duplicate Complaint</p>
                   {duplicateWarning.candidates?.map((c) => (
-                    <p key={c.complaint_id} className="text-xs text-amber-700 mt-1">
-                      {c.complaint_number} - {(c.similarity_score * 100).toFixed(0)}% similar
+                    <p key={c.complaint_id} className="mt-0.5">
+                      Matches record <span className="font-mono font-bold">{c.complaint_number}</span> ({Math.round(c.similarity_score * 100)}% match)
                     </p>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
 
-            {/* Section 1: Origin & Customer Details */}
-            <div>
-              <p className="section-header">1. Origin &amp; Customer Details</p>
+            {/* Section 1: Customer & Origin */}
+            <div className="card p-4 space-y-3">
+              <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                1. Customer &amp; Source
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField
-                  label="Complaint Source"
+                  label="Channel"
                   value={draft.source}
-                  placeholder="Awaiting AI extraction…"
-                  updatedFields={updatedFields}
-                  fieldName="source"
+                  placeholder="Awaiting extraction…"
                   options={['Pharmacy', 'Hospital', 'Distributor', 'Email', 'Direct Customer', 'Regulatory Body']}
                 />
                 <FormField
-                  label="Customer Name"
+                  label="Reporting Customer"
                   value={draft.customer_name}
-                  placeholder="Awaiting AI extraction…"
-                  updatedFields={updatedFields}
-                  fieldName="customer_name"
+                  placeholder="Awaiting extraction…"
                 />
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="border-t border-gray-100 dark:border-dark-border" />
-
-            {/* Section 2: Product & Batch Identification */}
-            <div>
-              <p className="section-header">2. Product &amp; Batch Identification</p>
+            {/* Section 2: Product & Batch */}
+            <div className="card p-4 space-y-3">
+              <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                2. Product &amp; Batch
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <FormField label="Product Name (API/FDF)" value={draft.product_name} placeholder="Awaiting AI extraction…" updatedFields={updatedFields} fieldName="product_name" />
-                <FormField label="Product Strength / Grade" value={draft.product_strength} placeholder="Awaiting AI extraction…" updatedFields={updatedFields} fieldName="product_strength" />
-                <FormField label="Batch / Lot Number" value={draft.batch_lot_number} placeholder="Awaiting AI extraction…" updatedFields={updatedFields} fieldName="batch_lot_number" />
-                <FormField label="Affected Quantity" value={draft.affected_quantity} placeholder="Awaiting AI extraction…" updatedFields={updatedFields} fieldName="affected_quantity" />
-                <FormField label="Manufacturing Date" value={draft.manufacturing_date} placeholder="Awaiting AI extraction…" updatedFields={updatedFields} fieldName="manufacturing_date" type="date" />
-                <FormField label="Expiry Date" value={draft.expiry_date} placeholder="Awaiting AI extraction…" updatedFields={updatedFields} fieldName="expiry_date" type="date" />
+                <FormField label="Product Name" value={draft.product_name} placeholder="Awaiting extraction…" />
+                <FormField label="Strength / Dosage" value={draft.product_strength} placeholder="Awaiting extraction…" />
+                <FormField label="Batch / Lot Number" value={draft.batch_lot_number} placeholder="Awaiting extraction…" isMonospace />
+                <FormField label="Affected Quantity" value={draft.affected_quantity} placeholder="Awaiting extraction…" isMonospace />
+                <FormField label="Manufacturing Date" value={draft.manufacturing_date} placeholder="Awaiting extraction…" type="date" />
+                <FormField label="Expiry Date" value={draft.expiry_date} placeholder="Awaiting extraction…" type="date" />
               </div>
             </div>
 
-            <div className="border-t border-gray-100 dark:border-dark-border" />
-
-            {/* Section 3: Facility & Material Impact */}
-            <div>
-              <p className="section-header">3. Facility &amp; Material Impact</p>
+            {/* Section 3: Facility & Packaging */}
+            <div className="card p-4 space-y-3">
+              <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                3. Facility &amp; Packaging
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <FormField label="Originating Site Block" value={draft.originating_site_block} placeholder="Awaiting AI extraction…" updatedFields={updatedFields} fieldName="originating_site_block" />
-                <FormField label="Impacted Non-Product Materials (NPM)" value={draft.impacted_npm} placeholder="e.g. Primary packaging…" updatedFields={updatedFields} fieldName="impacted_npm" />
+                <FormField label="Site Block" value={draft.originating_site_block} placeholder="Awaiting extraction…" />
+                <FormField label="Packaging Material (NPM)" value={draft.impacted_npm} placeholder="Awaiting extraction…" />
               </div>
             </div>
 
-            <div className="border-t border-gray-100 dark:border-dark-border" />
-
-            {/* Section 4: Defect Analysis */}
-            <div>
-              <p className="section-header">4. Defect Analysis</p>
+            {/* Section 4: Defect Description */}
+            <div className="card p-4 space-y-3">
+              <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                4. Defect Details
+              </h2>
               <div className="space-y-3">
-                <FormField label="Complaint Category" value={draft.complaint_category} placeholder="Awaiting AI classification…" updatedFields={updatedFields} fieldName="complaint_category" />
+                <FormField label="Category" value={draft.complaint_category} placeholder="Awaiting classification…" />
                 <FormField
-                  label="Complaint Description / Structured Defect Summary"
+                  label="Description"
                   value={draft.complaint_description}
-                  placeholder="AI will synthesize the complaint into a formal QMS description…"
-                  updatedFields={updatedFields}
-                  fieldName="complaint_description"
+                  placeholder="AI will synthesize complaint narrative here…"
                   isTextarea
                 />
               </div>
             </div>
 
-            <div className="border-t border-gray-100 dark:border-dark-border" />
-
-            {/* AI Risk Assessment Card */}
-            {riskAssessment ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="risk-assessment-card"
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="icon-chip icon-chip-accent">
-                    <Shield className="w-4 h-4" />
-                  </div>
-                  <span className="eyebrow-label">
-                    AI Copilot Risk Assessment
+            {/* Risk Assessment Card */}
+            {riskAssessment && (
+              <div className="card p-4 space-y-2.5 bg-slate-50 dark:bg-slate-900/60">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    AI Risk Assessment
                   </span>
-                  <span className={cn(
-                    'ml-auto text-xs font-semibold px-2.5 py-0.5 rounded-full',
-                    severityColors[riskAssessment.severity || ''] || 'text-gray-500 bg-gray-100'
-                  )}>
-                    {riskAssessment.severity || '-'}
+                  <span className="text-xs font-semibold text-slate-900 dark:text-white">
+                    Severity: {riskAssessment.severity || '—'}
                   </span>
                 </div>
-
-                {riskAssessment.regulatory_reportable && (
-                  <div className="flex items-center gap-1.5 mb-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                    <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
-                    May require regulatory notification (MHRA/USFDA) - AI suggestion, requires QA sign-off
-                  </div>
-                )}
-
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Suggested Next Action</p>
-                    <p className="text-sm text-gray-800 dark:text-dark-text-bright">{riskAssessment.suggested_next_action}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Initial Risk Assessment</p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{riskAssessment.initial_risk_assessment}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              <div className="risk-assessment-card opacity-60">
-                <div className="flex items-center gap-2 mb-3">
-                  <Shield className="w-4 h-4 text-primary-400" />
-                  <span className="text-xs font-bold tracking-widest uppercase text-primary-400">AI Copilot Risk Assessment</span>
-                </div>
-                <p className="text-sm text-gray-400 italic">
-                  AI will generate severity classification, risk assessment, and suggested next action after complaint extraction…
-                </p>
-              </div>
-            )}
-
-            {/* Completeness checker */}
-            {completeness && !completeness.is_complete && completeness.missing_fields && completeness.missing_fields.length > 0 && (
-              <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-xs font-medium text-blue-700 dark:text-blue-300">Missing fields</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {completeness.missing_fields.map((f) => (
-                      <span key={f} className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
-                        {f.replace(/_/g, ' ')}
-                      </span>
-                    ))}
-                  </div>
+                <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
+                  <p><span className="font-semibold text-slate-900 dark:text-white">Action:</span> {riskAssessment.suggested_next_action}</p>
+                  <p><span className="font-semibold text-slate-900 dark:text-white">Assessment:</span> {riskAssessment.initial_risk_assessment}</p>
                 </div>
               </div>
             )}
           </div>
 
           {/* Form footer */}
-          <div className="px-6 py-4 border-t border-gray-100 dark:border-dark-border flex items-center gap-3">
+          <div className="px-6 py-3 bg-white dark:bg-[#101420] border-t border-slate-200 dark:border-slate-800 flex items-center justify-between sticky bottom-0 z-10">
             <Button variant="ghost" size="sm" onClick={handleReset} leftIcon={<RotateCcw className="w-3.5 h-3.5" />}>
-              Reset Form
+              Reset
             </Button>
-            <div className="flex-1" />
             <Button
               variant="primary"
               size="md"
@@ -507,40 +403,36 @@ export default function NewComplaintPage() {
               isLoading={isCommitting}
               disabled={!canCommit}
               leftIcon={<CheckCircle className="w-4 h-4" />}
-              className={cn(!canCommit && 'opacity-50 cursor-not-allowed')}
             >
-              Commit to QMS Ledger
+              Commit Complaint
             </Button>
           </div>
         </div>
 
-        {/* RIGHT PANE - PharmAssist Copilot */}
+        {/* RIGHT PANE - AI Copilot */}
         <div className={cn(
-          'flex flex-col w-full lg:w-[45%] bg-[#F1F0FE] dark:bg-dark-bg overflow-hidden',
+          'flex flex-col w-full lg:w-[44%] bg-white dark:bg-[#101420] overflow-hidden',
           activeTab !== 'copilot' && 'hidden lg:flex'
         )}>
-          {/* Chat header */}
-          <div className="px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border p-1 flex items-center justify-center shrink-0">
-              <img src="/logo.png" alt="PharmAssist Logo" className="w-full h-full object-contain" />
+          {/* Header */}
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded bg-indigo-600 text-white flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5" />
+              </div>
+              <h2 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                Copilot Assistant
+              </h2>
             </div>
-            <div>
-              <h2 className="text-sm font-bold text-gray-900 dark:text-white">PharmAssist Copilot</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Drop complaint files or paste text below.</p>
-            </div>
-            <div className="ml-auto flex items-center gap-1.5">
-              <span className={cn(
-                'w-2 h-2 rounded-full',
-                isProcessing ? 'bg-green-500 animate-pulse' : 'bg-gray-300 dark:bg-gray-600'
-              )} />
-              <span className="text-xs text-gray-400">{isProcessing ? 'Processing' : 'Ready'}</span>
-            </div>
+            <span className="text-[11px] text-slate-400">
+              {isProcessing ? 'Thinking…' : 'Ready'}
+            </span>
           </div>
 
-          {/* Messages */}
+          {/* Messages Feed */}
           <div
             ref={chatEndRef}
-            className="flex-1 overflow-y-auto px-4 py-5 space-y-1"
+            className="flex-1 overflow-y-auto p-4 space-y-1 bg-slate-50/50 dark:bg-slate-950/40"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
@@ -549,9 +441,8 @@ export default function NewComplaintPage() {
             ))}
           </div>
 
-          {/* Input bar */}
-          <div className="px-4 py-4 bg-white dark:bg-dark-surface border-t border-gray-200 dark:border-dark-border">
-            {/* Hidden file input */}
+          {/* Input Box */}
+          <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#101420]">
             <input
               ref={inputRef}
               type="file"
@@ -563,10 +454,10 @@ export default function NewComplaintPage() {
             <div className="flex items-end gap-2">
               <button
                 onClick={openFilePicker}
-                className="p-2.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors"
-                title="Attach file (PDF, email, image)"
+                className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Attach Document"
               >
-                <Paperclip className="w-5 h-5" />
+                <Paperclip className="w-4 h-4" />
               </button>
 
               <div className="flex-1 relative">
@@ -579,10 +470,10 @@ export default function NewComplaintPage() {
                       handleSendMessage()
                     }
                   }}
-                  placeholder="Type a message or paste a complaint…"
+                  placeholder="Paste complaint email text, notes, or drop PDF files here…"
                   rows={1}
-                  className="w-full px-4 py-3 pr-12 text-sm rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg resize-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none dark:text-white placeholder-gray-400 max-h-32 overflow-y-auto"
-                  style={{ minHeight: '44px' }}
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none resize-none"
+                  style={{ minHeight: '38px' }}
                 />
               </div>
 
@@ -590,19 +481,15 @@ export default function NewComplaintPage() {
                 onClick={handleSendMessage}
                 disabled={!inputText.trim() || isProcessing}
                 className={cn(
-                  'w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm',
+                  'w-9 h-9 rounded-lg flex items-center justify-center transition-colors',
                   inputText.trim() && !isProcessing
-                    ? 'bg-gradient-to-br from-primary-600 to-violet-600 text-white hover:shadow-md hover:scale-105'
-                    : 'bg-gray-100 dark:bg-dark-border text-gray-400 cursor-not-allowed'
+                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    : 'bg-slate-100 text-slate-400 dark:bg-slate-800 cursor-not-allowed'
                 )}
               >
                 <Send className="w-4 h-4" />
               </button>
             </div>
-
-            <p className="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 mt-2 tracking-widest uppercase">
-              POWERED BY LANGGRAPH
-            </p>
           </div>
         </div>
       </div>

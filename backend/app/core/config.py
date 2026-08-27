@@ -31,8 +31,8 @@ class Settings(BaseSettings):
 
     # ── Groq / LLM ────────────────────────────────────────────────
     groq_api_key: str = ""
-    primary_model: str = "llama-3.1-8b-instant"
-    secondary_model: str = "llama-3.3-70b-versatile"
+    primary_model: str = "openai/gpt-oss-20b"
+    secondary_model: str = "openai/gpt-oss-120b"
     use_large_model: bool = False
     groq_timeout_seconds: int = 20
     groq_max_retries: int = 2
@@ -59,8 +59,8 @@ class Settings(BaseSettings):
     def model_for_node(self, node_name: str) -> str:
         """Return the appropriate model name for a given graph node."""
         model = self.secondary_model if (self.use_large_model and node_name in self.large_model_nodes) else self.primary_model
-        if "gemma" in model.lower():
-            return "llama-3.1-8b-instant"
+        if "llama-3.1" in model.lower() or "llama-3.3" in model.lower() or "gemma" in model.lower():
+            return "openai/gpt-oss-120b" if self.use_large_model else "openai/gpt-oss-20b"
         return model
 
 
