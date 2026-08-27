@@ -1,11 +1,13 @@
+# pyright: reportMissingTypeStubs=false
+# type: ignore
 import os
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import (
+from reportlab.lib.pagesizes import letter  # type: ignore
+from reportlab.lib import colors  # type: ignore
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle  # type: ignore
+from reportlab.platypus import (  # type: ignore
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether, HRFlowable
 )
-from reportlab.pdfgen import canvas
+from reportlab.pdfgen import canvas  # type: ignore
 
 class NumberedCanvas(canvas.Canvas):
     def __init__(self, *args, **kwargs):
