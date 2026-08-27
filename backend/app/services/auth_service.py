@@ -16,6 +16,31 @@ class AuthService:
 
     async def login(self, email: str, password: str) -> Optional[AuthResponse]:
         user = await self.user_repo.get_by_email(email)
+
+        # Auto-provision standard demo / admin users if missing
+        if not user:
+            if email == "admin@pharmassist.com" and password in ("admin1234", "demo1234"):
+                user = await self.user_repo.create(
+                    email="admin@pharmassist.com",
+                    name="QA Manager Admin",
+                    hashed_password=hash_password("admin1234"),
+                    role="qa_manager",
+                )
+            elif email == "demo@pharmassist.com" and password in ("demo1234", "admin1234"):
+                user = await self.user_repo.create(
+                    email="demo@pharmassist.com",
+                    name="Demo QA Officer",
+                    hashed_password=hash_password("demo1234"),
+                    role="qa_officer",
+                )
+            elif email in ("qa.lead@pharmassist.io", "qa.specialist@pharmassist.io") and password in ("demo1234", "admin1234"):
+                user = await self.user_repo.create(
+                    email=email,
+                    name="QA Specialist" if "specialist" in email else "QA Lead",
+                    hashed_password=hash_password("demo1234"),
+                    role="qa_officer" if "specialist" in email else "qa_manager",
+                )
+
         if not user or not verify_password(password, user.hashed_password):
             return None
 
