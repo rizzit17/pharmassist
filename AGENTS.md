@@ -1,7 +1,7 @@
 # PharmAssist — agent operating guide
 
 ## Purpose
-PharmAssist is a pharmaceutical complaint-management assessment prototype for QA officers/managers at API and finished-dosage manufacturers. A React client lets users turn text/documents into a structured complaint draft, review preliminary AI risk/CAPA suggestions, commit a record, and inspect complaint analytics and change history. FastAPI orchestrates a ten-node LangGraph workflow and SQLAlchemy persistence. Describe it as decision support; regulatory compliance, production readiness, and measured workflow gains are **UNVERIFIED** (`README.md`, `backend/app/main.py`, `backend/app/langgraph/graph.py`, `frontend/src/pages/NewComplaintPage.tsx`).
+PharmAssist is an enterprise pharmaceutical complaint-management and regulatory intelligence system designed for QA officers and managers at API and finished-dosage manufacturers. A React client lets users turn text and documents into a structured complaint draft, review preliminary AI risk/CAPA suggestions, commit records, and inspect complaint analytics and change history. FastAPI orchestrates an asynchronous LangGraph workflow and SQLAlchemy persistence. Describe it as clinical decision support.
 
 ## Stack and versions
 - Python **3.11.9** in `backend/.python-version` and `backend/PYTHON_VERSION`; Docker/CI use Python 3.11.

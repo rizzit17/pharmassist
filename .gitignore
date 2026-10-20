@@ -70,12 +70,19 @@ aivoa.db
 *.log
 logs/
 
-# Submission Archives & Large Media
+# Submission Archives, Docs & Personal Notes
 *.zip
 AIVOA_PharmAssist_Submission.zip
 *.mp4
 *.mov
 *.docx
-AIVOA internship.docx
+*.pdf
+!sample_complaints/*.pdf
+PharmAssist_Interview_Prep*.md
 pharmassist_interview_prep.md
+docs/
+generate_submission_pdf.py
+IMPLEMENTATION_NOTES.md
+CONTEXT_pharmassist.md
+
 
