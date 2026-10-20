@@ -199,5 +199,3 @@ Designed with reference to:
 - **ICH Q9** (Quality Risk Management Guidelines)
 
 ---
-
-Developed for the **PharmAssist Technical Internship Assessment**.
