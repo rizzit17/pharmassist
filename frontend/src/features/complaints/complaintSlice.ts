@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RiskAssessment, Completeness, DuplicateWarning, Recommendations } from '@/types/copilot'
-import type { ComplaintStatus, ComplaintDraft } from '@/types/complaint'
+import type { ComplaintDraft } from '@/types/complaint'
 
 type StatusPillState = 'pending_triage' | 'ready_to_commit' | 'committed' | 'draft'
 
@@ -93,7 +93,7 @@ const complaintSlice = createSlice({
       }
 
       // Update status pill based on completeness + risk
-      if (completeness?.is_complete && risk_assessment?.severity) {
+      if (state.completeness?.is_complete && state.riskAssessment?.severity) {
         state.statusPill = 'ready_to_commit'
       } else {
         state.statusPill = 'pending_triage'

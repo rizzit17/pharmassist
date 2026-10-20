@@ -124,7 +124,7 @@ export default function ComplaintDetailPage() {
           <select
             value={complaint.status}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="text-xs font-semibold px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-indigo-500"
+            className="text-xs font-semibold px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-brand-500"
           >
             {['draft', 'pending_triage', 'ready_to_commit', 'committed', 'under_investigation', 'capa_assigned', 'closed'].map((s) => (
               <option key={s} value={s}>{getStatusLabel(s as any)}</option>
@@ -163,7 +163,7 @@ export default function ComplaintDetailPage() {
               </div>
               <div>
                 <p className="text-slate-400">Batch / Lot Number</p>
-                <p className="font-mono font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">{complaint.batch_lot_number || '—'}</p>
+                <p className="font-mono font-semibold text-brand-600 dark:text-brand-400 mt-0.5">{complaint.batch_lot_number || '—'}</p>
               </div>
               <div>
                 <p className="text-slate-400">Affected Quantity</p>
@@ -243,9 +243,9 @@ export default function ComplaintDetailPage() {
         {/* Right Column: AI Risk Assessment & Summary (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
           {latestAnalysis && (
-            <div className="card p-5 space-y-3 bg-indigo-50/40 dark:bg-indigo-950/30">
+            <div className="card p-5 space-y-3 bg-brand-50/40 dark:bg-brand-950/30">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
+                <span className="text-xs font-semibold text-brand-700 dark:text-brand-300 uppercase tracking-wider">
                   AI Risk Assessment
                 </span>
                 <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-semibold', getSeverityColor(latestAnalysis.severity))}>

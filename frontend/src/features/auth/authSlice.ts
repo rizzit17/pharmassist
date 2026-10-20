@@ -8,8 +8,18 @@ interface AuthState {
   isLoading: boolean
 }
 
+const readStoredUser = (): User | null => {
+  try {
+    return JSON.parse(localStorage.getItem('pharmassist_user') || 'null')
+  } catch {
+    localStorage.removeItem('pharmassist_user')
+    localStorage.removeItem('pharmassist_token')
+    return null
+  }
+}
+
 const initialState: AuthState = {
-  user: JSON.parse(localStorage.getItem('pharmassist_user') || 'null'),
+  user: readStoredUser(),
   token: localStorage.getItem('pharmassist_token'),
   isAuthenticated: !!localStorage.getItem('pharmassist_token'),
   isLoading: false,

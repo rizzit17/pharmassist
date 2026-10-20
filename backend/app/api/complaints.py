@@ -38,7 +38,8 @@ async def create_complaint(
 ):
     """Create a new complaint (from AI Copilot commit or manual entry)."""
     service = ComplaintService(db)
-    ai_data = data.risk_assessment or data.ai_analysis
+    analysis = data.risk_assessment or data.ai_analysis
+    ai_data = analysis.model_dump(exclude_none=True) if analysis else None
     if not ai_data:
         cat = (data.complaint_category or "").lower()
         desc = (data.complaint_description or "").lower()

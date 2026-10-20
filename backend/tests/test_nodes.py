@@ -9,22 +9,26 @@ from app.langgraph.nodes import (
 
 
 @pytest.mark.asyncio
-async def test_intent_detection_node():
+async def test_intent_detection_node(monkeypatch):
+    from types import SimpleNamespace
+    async def mock_llm(**kwargs):
+        return SimpleNamespace(content='{"intent": "NEW_COMPLAINT"}')
+    monkeypatch.setattr(intent_detection, "invoke_llm_with_retry", mock_llm)
     state = {
-        "user_input": "Log a new complaint for Metformin yellowing batch MET-100",
-        "file_path": None,
+        "user_message": "Log a new complaint for Metformin yellowing batch MET-100",
+        "uploaded_file_path": None,
         "chat_history": [],
     }
     result = await intent_detection.intent_detection_node(state)
     assert "intent" in result
-    assert result["intent"] in ["NEW_COMPLAINT", "AMBIGUOUS", "EDIT_COMPLAINT", "GENERAL_QUERY"]
+    assert result["intent"] == "NEW_COMPLAINT"
 
 
 @pytest.mark.asyncio
 async def test_input_type_detection_node():
     state = {
-        "file_path": None,
-        "user_input": "Hello world",
+        "uploaded_file_path": None,
+        "user_message": "Hello world",
     }
     result = await input_type_detection.input_type_detection_node(state)
     assert result.get("input_type") == "text"

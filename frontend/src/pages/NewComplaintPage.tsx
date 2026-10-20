@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { applyAIResponse, resetDraft, markCommitted, setIsCommitting } from '@/features/complaints/complaintSlice'
-import { addUserMessage, addProcessingIndicator, addAssistantMessage, setProcessingError, addFileProgressMessage } from '@/features/copilot/chatSlice'
+import { applyAIResponse, resetDraft, markCommitted, setIsCommitting, setCommitError } from '@/features/complaints/complaintSlice'
+import { addUserMessage, addProcessingIndicator, addAssistantMessage, setProcessingError, addFileProgressMessage, resetChat } from '@/features/copilot/chatSlice'
 import { copilotApi, complaintsApi } from '@/lib/api'
 import { useAutoScroll } from '@/hooks/useAutoScroll'
 import { useFileUpload } from '@/hooks/useFileUpload'
@@ -31,7 +31,7 @@ function FormField({
 
   const inputClass = cn(
     'w-full px-3 py-2 text-xs rounded-lg border transition-colors outline-none',
-    'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500',
+    'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-brand-500 focus:ring-1 focus:ring-brand-500',
     isMonospace && 'font-mono',
     isEmpty ? 'text-slate-400 placeholder:text-slate-400 italic' : 'text-slate-900 dark:text-white font-medium'
   )
@@ -88,7 +88,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
   if (msg.isProcessing) {
     return (
       <div className="flex items-start gap-2.5 mb-3">
-        <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0">
+        <div className="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center flex-shrink-0">
           <Bot className="w-3.5 h-3.5" />
         </div>
         <div className="card px-3.5 py-2.5 max-w-xs text-xs">
@@ -99,14 +99,14 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
               </p>
               <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-indigo-600 transition-all duration-300"
+                  className="h-full bg-brand-600 transition-all duration-300"
                   style={{ width: `${msg.progressValue}%` }}
                 />
               </div>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-600 animate-pulse" />
               <span className="text-slate-500">Processing input...</span>
             </div>
           )}
@@ -118,8 +118,8 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
   if (msg.isFileUpload) {
     return (
       <div className="flex justify-end mb-3">
-        <div className="bg-indigo-600 text-white px-3.5 py-2 rounded-lg text-xs flex items-center gap-2 max-w-xs">
-          <FileText className="w-4 h-4 text-indigo-200" />
+        <div className="bg-brand-600 text-white px-3.5 py-2 rounded-lg text-xs flex items-center gap-2 max-w-xs">
+          <FileText className="w-4 h-4 text-brand-200" />
           <span className="truncate">{msg.attachedFileName}</span>
         </div>
       </div>
@@ -129,7 +129,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
   if (msg.role === 'user') {
     return (
       <div className="flex justify-end mb-3">
-        <div className="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl rounded-tr-none text-xs leading-relaxed max-w-sm">
+        <div className="bg-brand-600 text-white px-3.5 py-2.5 rounded-xl rounded-tr-none text-xs leading-relaxed max-w-sm">
           <p className="whitespace-pre-wrap">{msg.content}</p>
         </div>
       </div>
@@ -138,7 +138,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
 
   return (
     <div className="flex items-start gap-2.5 mb-3">
-      <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0">
+      <div className="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center flex-shrink-0">
         <Bot className="w-3.5 h-3.5" />
       </div>
       <div className="card px-3.5 py-2.5 rounded-xl rounded-tl-none text-xs leading-relaxed max-w-sm text-slate-800 dark:text-slate-200">
@@ -158,12 +158,13 @@ export default function NewComplaintPage() {
   const duplicateWarning = useAppSelector((s) => s.complaint.duplicateWarning)
   const sessionId = useAppSelector((s) => s.complaint.sessionId)
   const isCommitting = useAppSelector((s) => s.complaint.isCommitting)
+  const commitError = useAppSelector((s) => s.complaint.commitError)
   const messages = useAppSelector((s) => s.chat.messages)
   const isProcessing = useAppSelector((s) => s.chat.isProcessing)
 
   const [inputText, setInputText] = useState('')
   const [activeTab, setActiveTab] = useState<'form' | 'copilot'>('form')
-  const chatEndRef = useAutoScroll<HTMLDivElement>([messages])
+  const chatEndRef = useAutoScroll<HTMLDivElement>(messages)
 
   const handleSendMessage = async () => {
     const text = inputText.trim()
@@ -197,6 +198,7 @@ export default function NewComplaintPage() {
   }
 
   const handleFileUpload = useCallback(async (file: File) => {
+    if (isProcessing) return
     dispatch(addUserMessage({ content: `[Uploaded: ${file.name}]`, attachedFileName: file.name }))
     dispatch(addFileProgressMessage({ fileName: file.name, progress: 20 }))
 
@@ -216,7 +218,7 @@ export default function NewComplaintPage() {
     } catch (err: any) {
       dispatch(setProcessingError(err.message || 'File processing failed.'))
     }
-  }, [dispatch, sessionId])
+  }, [dispatch, sessionId, isProcessing])
 
   const { inputRef, handleFileInput, handleDrop, handleDragOver, openFilePicker } = useFileUpload(
     handleFileUpload,
@@ -224,6 +226,8 @@ export default function NewComplaintPage() {
   )
 
   const handleCommit = async () => {
+    if (isCommitting || isProcessing) return
+    dispatch(setCommitError(null))
     dispatch(setIsCommitting(true))
     try {
       const complaint = await complaintsApi.create({
@@ -234,14 +238,17 @@ export default function NewComplaintPage() {
       dispatch(markCommitted())
       navigate(`/complaints/${complaint.id}`)
     } catch (err: any) {
-      console.error('Commit failed:', err)
+      dispatch(setCommitError(err.message || 'Could not save complaint. Please try again.'))
     } finally {
       dispatch(setIsCommitting(false))
     }
   }
 
   const handleReset = () => {
+    if (isProcessing || isCommitting) return
     dispatch(resetDraft())
+    dispatch(resetChat())
+    setInputText('')
   }
 
   const canCommit = completeness?.is_complete && !!riskAssessment?.severity
@@ -249,7 +256,7 @@ export default function NewComplaintPage() {
   return (
     <div className="h-full flex flex-col">
       {/* Mobile tab switcher */}
-      <div className="lg:hidden flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101420]">
+      <div className="lg:hidden flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#17271F]">
         {(['form', 'copilot'] as const).map((tab) => (
           <button
             key={tab}
@@ -257,7 +264,7 @@ export default function NewComplaintPage() {
             className={cn(
               'flex-1 py-3 text-xs font-semibold transition-colors',
               activeTab === tab
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
+                ? 'text-brand-600 border-b-2 border-brand-600'
                 : 'text-slate-500'
             )}
           >
@@ -270,11 +277,11 @@ export default function NewComplaintPage() {
       <div className="flex-1 flex overflow-hidden">
         {/* LEFT PANE - Clean Complaint Form */}
         <div className={cn(
-          'flex flex-col w-full lg:w-[56%] border-r border-slate-200 dark:border-slate-800 bg-[#F8FAFC] dark:bg-[#0C0F17] overflow-y-auto',
+          'flex flex-col w-full lg:w-[56%] border-r border-slate-200 dark:border-slate-800 bg-[#F7F9F6] dark:bg-[#101D17] overflow-y-auto',
           activeTab !== 'form' && 'hidden lg:flex'
         )}>
           {/* Form header */}
-          <div className="px-6 py-4 bg-white dark:bg-[#101420] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10 flex items-center justify-between">
+          <div className="px-6 py-4 bg-white dark:bg-[#17271F] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10 flex items-center justify-between">
             <div>
               <h1 className="text-lg font-bold text-slate-900 dark:text-white">
                 Log New Complaint
@@ -391,8 +398,9 @@ export default function NewComplaintPage() {
             )}
           </div>
 
+          {commitError && <p role="alert" className="px-6 py-2 text-sm text-red-600">{commitError}</p>}
           {/* Form footer */}
-          <div className="px-6 py-3 bg-white dark:bg-[#101420] border-t border-slate-200 dark:border-slate-800 flex items-center justify-between sticky bottom-0 z-10">
+          <div className="px-6 py-3 bg-white dark:bg-[#17271F] border-t border-slate-200 dark:border-slate-800 flex items-center justify-between sticky bottom-0 z-10">
             <Button variant="ghost" size="sm" onClick={handleReset} leftIcon={<RotateCcw className="w-3.5 h-3.5" />}>
               Reset
             </Button>
@@ -401,7 +409,7 @@ export default function NewComplaintPage() {
               size="md"
               onClick={handleCommit}
               isLoading={isCommitting}
-              disabled={!canCommit}
+              disabled={!canCommit || isProcessing || isCommitting}
               leftIcon={<CheckCircle className="w-4 h-4" />}
             >
               Commit Complaint
@@ -411,13 +419,13 @@ export default function NewComplaintPage() {
 
         {/* RIGHT PANE - AI Copilot */}
         <div className={cn(
-          'flex flex-col w-full lg:w-[44%] bg-white dark:bg-[#101420] overflow-hidden',
+          'flex flex-col w-full lg:w-[44%] bg-white dark:bg-[#17271F] overflow-hidden',
           activeTab !== 'copilot' && 'hidden lg:flex'
         )}>
           {/* Header */}
           <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-indigo-600 text-white flex items-center justify-center">
+              <div className="w-6 h-6 rounded bg-brand-600 text-white flex items-center justify-center">
                 <Sparkles className="w-3.5 h-3.5" />
               </div>
               <h2 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
@@ -442,7 +450,7 @@ export default function NewComplaintPage() {
           </div>
 
           {/* Input Box */}
-          <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#101420]">
+          <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#17271F]">
             <input
               ref={inputRef}
               type="file"
@@ -454,7 +462,7 @@ export default function NewComplaintPage() {
             <div className="flex items-end gap-2">
               <button
                 onClick={openFilePicker}
-                className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 title="Attach Document"
               >
                 <Paperclip className="w-4 h-4" />
@@ -472,7 +480,7 @@ export default function NewComplaintPage() {
                   }}
                   placeholder="Paste complaint email text, notes, or drop PDF files here…"
                   rows={1}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none resize-none"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none"
                   style={{ minHeight: '38px' }}
                 />
               </div>
@@ -483,7 +491,7 @@ export default function NewComplaintPage() {
                 className={cn(
                   'w-9 h-9 rounded-lg flex items-center justify-center transition-colors',
                   inputText.trim() && !isProcessing
-                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    ? 'bg-brand-600 hover:bg-brand-700 text-white'
                     : 'bg-slate-100 text-slate-400 dark:bg-slate-800 cursor-not-allowed'
                 )}
               >

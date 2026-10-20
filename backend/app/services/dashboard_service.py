@@ -14,6 +14,16 @@ class DashboardService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    def latest_analyses(self):
+        ranked = select(
+            AIAnalysis.complaint_id, AIAnalysis.severity,
+            func.row_number().over(
+                partition_by=AIAnalysis.complaint_id,
+                order_by=(AIAnalysis.created_at.desc(), AIAnalysis.id.desc()),
+            ).label("position"),
+        ).subquery()
+        return select(ranked.c.complaint_id, ranked.c.severity).where(ranked.c.position == 1).subquery()
+
     async def get_stats(self) -> KPIStats:
         """Compute KPI metrics for the dashboard cards."""
         now = datetime.now(timezone.utc)
@@ -32,10 +42,11 @@ class DashboardService:
         )
         open_count = open_result.scalar() or 0
 
-        # Critical complaints (from ai_analysis)
+        latest = self.latest_analyses()
+        # Count the current assessment once per complaint.
         critical_result = await self.db.execute(
-            select(func.count()).select_from(AIAnalysis).where(
-                AIAnalysis.severity == "Critical"
+            select(func.count()).select_from(latest).where(
+                latest.c.severity == "Critical"
             )
         )
         critical_count = critical_result.scalar() or 0
@@ -68,10 +79,12 @@ class DashboardService:
 
     async def get_chart_data(self) -> ChartData:
         """Compute chart datasets for the dashboard visualizations."""
+        latest = self.latest_analyses()
         # Severity distribution
         severity_result = await self.db.execute(
-            select(AIAnalysis.severity, func.count().label("count"))
-            .group_by(AIAnalysis.severity)
+            select(latest.c.severity, func.count().label("count"))
+            .where(latest.c.severity.isnot(None))
+            .group_by(latest.c.severity)
         )
         severity_rows = severity_result.all()
         severity_total = sum(r.count for r in severity_rows) or 1
@@ -98,7 +111,11 @@ class DashboardService:
             select(
                 month_expr.label("month"),
                 func.count().label("count"),
+                func.sum(case((latest.c.severity == "Critical", 1), else_=0)).label("critical"),
+                func.sum(case((latest.c.severity == "Major", 1), else_=0)).label("major"),
+                func.sum(case((latest.c.severity == "Minor", 1), else_=0)).label("minor"),
             )
+            .outerjoin(latest, latest.c.complaint_id == Complaint.id)
             .where(Complaint.created_at >= six_months_ago)
             .group_by(month_expr)
             .order_by(month_expr.asc())
@@ -109,9 +126,9 @@ class DashboardService:
             MonthlyChartPoint(
                 month=r.month,
                 count=r.count,
-                critical=0,  # Simplified — join with ai_analysis for real breakdown
-                major=0,
-                minor=0,
+                critical=r.critical or 0,
+                major=r.major or 0,
+                minor=r.minor or 0,
             )
             for r in monthly_rows
         ]

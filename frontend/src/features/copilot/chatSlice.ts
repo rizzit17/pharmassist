@@ -69,6 +69,7 @@ const chatSlice = createSlice({
           progressValue: action.payload.progress,
         })
       }
+      state.isProcessing = true
       state.uploadProgress = action.payload.progress
     },
 

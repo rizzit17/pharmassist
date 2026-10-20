@@ -54,7 +54,7 @@ async def risk_analysis_node(state: ComplaintGraphState) -> dict:
     intent = state.get("intent")
     requires_rerun = state.get("requires_risk_rerun", False)
 
-    if intent == "EDIT_COMPLAINT" and not requires_rerun:
+    if intent == "EDIT_COMPLAINT" and not requires_rerun and (state.get("risk_assessment") or {}).get("severity"):
         logger.info("Skipping risk re-analysis (non-material edit)")
         return {}  # Preserve existing risk_assessment in state
 
@@ -135,11 +135,11 @@ Source: {complaint.get('source', 'Unknown')}
         logger.error("Risk analysis failed: %s", e)
         return {
             "risk_assessment": {
-                "severity": "Major",
+                "severity": None,
                 "suggested_next_action": "Route to QA Investigation",
                 "initial_risk_assessment": "Risk assessment unavailable - AI service error. Please assess manually.",
-                "regulatory_reportable": False,
+                "regulatory_reportable": None,
             },
-            "status": "error" if not state.get("complaint") else state.get("status", "success"),
+            "status": "error",
             "assistant_message": "I completed the extraction but couldn't finish the risk assessment. Please try again.",
         }

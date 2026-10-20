@@ -1,5 +1,5 @@
 import React from 'react'
-import { MessageSquare, ArrowRight, Clock } from 'lucide-react'
+import { MessageSquare, ArrowRight } from 'lucide-react'
 import { useAppSelector } from '@/app/hooks'
 import { formatDate } from '@/lib/formatters'
 import { useNavigate } from 'react-router-dom'

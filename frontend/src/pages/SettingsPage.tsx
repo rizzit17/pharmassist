@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { CheckCircle, Save, Moon, Sun } from 'lucide-react'
 import { useAppSelector, useAppDispatch } from '@/app/hooks'
 import { toggleTheme } from '@/features/settings/themeSlice'
@@ -96,6 +97,7 @@ export default function SettingsPage() {
           <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Appearance
           </h2>
+          <Link to="/welcome" className="inline-flex text-sm text-brand-700 dark:text-brand-200 underline underline-offset-4">Preview welcome screen</Link>
 
           <div className="grid grid-cols-2 gap-3 pt-1">
             <button
@@ -103,13 +105,13 @@ export default function SettingsPage() {
               className={cn(
                 'p-3.5 rounded-lg border text-left transition-colors relative',
                 !isDark
-                  ? 'border-indigo-600 bg-indigo-50/40'
+                  ? 'border-brand-600 bg-brand-50/40'
                   : 'border-slate-200 dark:border-slate-800 hover:border-slate-300'
               )}
             >
               <Sun className="w-5 h-5 text-amber-500 mb-2" />
               <p className="text-xs font-semibold text-slate-900 dark:text-white">Light Mode</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">Crisp daytime theme</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Clinical Sage · light</p>
             </button>
 
             <button
@@ -117,13 +119,13 @@ export default function SettingsPage() {
               className={cn(
                 'p-3.5 rounded-lg border text-left transition-colors relative',
                 isDark
-                  ? 'border-indigo-500 bg-indigo-950/30'
+                  ? 'border-brand-500 bg-brand-950/30'
                   : 'border-slate-200 dark:border-slate-800 hover:border-slate-300'
               )}
             >
-              <Moon className="w-5 h-5 text-indigo-400 mb-2" />
+              <Moon className="w-5 h-5 text-brand-400 mb-2" />
               <p className="text-xs font-semibold text-slate-900 dark:text-white">Dark Mode</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">Low-light theme</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Clinical Sage · dark</p>
             </button>
           </div>
         </div>
@@ -142,7 +144,7 @@ export default function SettingsPage() {
               <select
                 value={primaryModel}
                 onChange={(e) => setPrimaryModel(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-brand-500"
               >
                 <option value="groq-llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
                 <option value="groq-llama-3.1-70b-versatile">llama-3.1-70b-versatile</option>
@@ -157,7 +159,7 @@ export default function SettingsPage() {
               <select
                 value={reasoningModel}
                 onChange={(e) => setReasoningModel(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-brand-500"
               >
                 <option value="groq-llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
                 <option value="groq-llama-3.1-8b-instant">llama-3.1-8b-instant</option>
@@ -171,7 +173,7 @@ export default function SettingsPage() {
               <select
                 value={ocrEngine}
                 onChange={(e) => setOcrEngine(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+                className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-brand-500"
               >
                 <option value="tesseract-ocr">Tesseract OCR v5</option>
                 <option value="pdfplumber">pdfplumber Text Engine</option>

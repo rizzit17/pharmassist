@@ -54,7 +54,7 @@ async def save_upload(file: UploadFile) -> dict:
     ext = _validate_extension(file.filename or "unknown")
 
     # Read file content
-    content = await file.read()
+    content = await file.read(settings.max_upload_size_mb * 1024 * 1024 + 1)
     size_mb = len(content) / (1024 * 1024)
 
     if size_mb > settings.max_upload_size_mb:

@@ -19,7 +19,7 @@ export default function CopilotPage() {
   const draft = useAppSelector((s) => s.complaint.draft)
 
   const [input, setInput] = useState('')
-  const chatEndRef = useAutoScroll<HTMLDivElement>([messages])
+  const chatEndRef = useAutoScroll<HTMLDivElement>(messages)
 
   const handleSend = async () => {
     const text = input.trim()
@@ -53,6 +53,7 @@ export default function CopilotPage() {
   }
 
   const handleFileUpload = async (file: File) => {
+    if (isProcessing) return
     dispatch(addUserMessage({ content: `[Uploaded: ${file.name}]`, attachedFileName: file.name }))
     dispatch(addFileProgressMessage({ fileName: file.name, progress: 20 }))
 
@@ -80,9 +81,9 @@ export default function CopilotPage() {
   )
 
   const quickPrompts = [
-    'Analyze batch dissolution failure for Metformin 500mg (Lot #MET-2024-09)',
-    'Synthesize email regarding broken seal ampoules in Ciprofloxacin batch',
-    'Evaluate regulatory reportability under 21 CFR 211 for particulate contamination',
+    { title: 'Start a complaint', detail: 'Know what to capture', prompt: 'Help me prepare a new complaint. Which details should I collect before logging it?' },
+    { title: 'Review the draft', detail: 'Find missing information', prompt: 'Review the current complaint. What information is missing or needs clarification?' },
+    { title: 'Prepare a QA handoff', detail: 'Turn context into a useful brief', prompt: 'Summarize the current complaint for a QA handoff. Separate confirmed facts, missing details, and suggested next steps.' },
   ]
 
   return (
@@ -127,13 +128,13 @@ export default function CopilotPage() {
                 className={cn(
                   'max-w-xl px-4 py-3 rounded-xl text-xs sm:text-sm leading-relaxed',
                   msg.role === 'user'
-                    ? 'bg-indigo-600 text-white rounded-tr-none font-medium'
+                    ? 'bg-brand-600 text-white rounded-tr-none font-medium'
                     : 'card rounded-tl-none text-slate-800 dark:text-slate-200'
                 )}
               >
                 {msg.isProcessing ? (
                   <div className="flex items-center gap-2 py-1 text-slate-500">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-600 animate-pulse" />
                     <span>Analyzing complaint details…</span>
                   </div>
                 ) : (
@@ -145,7 +146,7 @@ export default function CopilotPage() {
 
           {messages.length <= 1 && (
             <div className="pt-8 text-center max-w-md mx-auto">
-              <Sparkles className="w-8 h-8 text-indigo-500/40 mx-auto mb-2" />
+              <Sparkles className="w-8 h-8 text-brand-500/40 mx-auto mb-2" />
               <p className="text-xs font-semibold text-slate-500 mb-3">
                 Suggested Prompts
               </p>
@@ -153,10 +154,11 @@ export default function CopilotPage() {
                 {quickPrompts.map((q, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setInput(q)}
-                    className="w-full text-left text-xs p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-indigo-400 transition-colors"
+                    onClick={() => setInput(q.prompt)}
+                    className="w-full text-left text-xs p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-brand-400 transition-colors"
                   >
-                    "{q}"
+                    <span className="block font-semibold text-brand-700 dark:text-brand-200">{q.title}</span>
+                    <span className="block mt-1 text-slate-500">{q.detail}</span>
                   </button>
                 ))}
               </div>
@@ -165,7 +167,7 @@ export default function CopilotPage() {
         </div>
 
         {/* Input Bar */}
-        <div className="p-3.5 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#101420]">
+        <div className="p-3.5 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#17271F]">
           <input
             ref={inputRef}
             type="file"
@@ -176,7 +178,7 @@ export default function CopilotPage() {
           <div className="flex items-end gap-2">
             <button
               onClick={openFilePicker}
-              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+              className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
               title="Attach document"
             >
               <Paperclip className="w-4 h-4" />
@@ -193,7 +195,7 @@ export default function CopilotPage() {
                 }}
                 placeholder="Ask Copilot or paste complaint text…"
                 rows={1}
-                className="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none text-slate-900 dark:text-white"
+                className="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 resize-none text-slate-900 dark:text-white"
               />
             </div>
             <Button

@@ -1,6 +1,6 @@
 # PharmAssist: AI-Powered Customer Complaint Management System (QMS)
 
-> **PharmAssist Internship Assessment Task**
+> **Enterprise AI-Powered Quality Management System (QMS)**
 > An enterprise-grade, AI-driven Quality Management System (QMS) module designed for Pharmaceutical API (Active Pharmaceutical Ingredients) & FDF (Finished Dosage Form) Manufacturers. Features an interactive **LangGraph Multi-Node AI Copilot** that extracts, validates, risk-assesses, and deduplicates customer complaints in compliance with GxP and regulatory standards (USFDA / MHRA / WHO-GMP).
 
 ---
@@ -121,11 +121,11 @@ pharmassist/
 
 ## Quickstart & Local Setup
 
-### Prerequisites
+### **Prerequisites**
 - Node.js (v18+) & npm
 - Python (v3.10+)
-- Docker (for local PostgreSQL)
-- Groq API Key (optional for live LLM extraction; mock mode supported)
+- Docker (for local PostgreSQL or full containerized stack)
+- Groq API Key (required for live AI extraction; manual API CRUD works without it)
 
 ---
 
@@ -153,10 +153,10 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Create .env file and configure:
-#   DATABASE_URL=postgresql+asyncpg://<user>:<password>@localhost:5432/<db_name>
-#   GROQ_API_KEY=your_groq_api_key_here
-cp .env.example .env
+# Create .env file with your configuration:
+cp ../.env.example .env
+# For local SQLite development: DATABASE_URL=sqlite+aiosqlite:///./pharmassist.db
+# Or for PostgreSQL: DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/pharmassist
 
 # Run the FastAPI server
 uvicorn app.main:app --reload --port 8000
@@ -179,7 +179,7 @@ npm install
 npm run dev
 ```
 
-> The web application will launch at `http://localhost:5173`.
+> The web application will launch at `http://localhost:5174` (or `5173`).
 
 ---
 
@@ -199,3 +199,24 @@ Designed with reference to:
 - **ICH Q9** (Quality Risk Management Guidelines)
 
 ---
+<p align="center">
+<b>PharmAssist</b> — Enterprise Quality Management System & Regulatory Intelligence
+</p>
+
+## Verification and deployment notes
+
+Run backend checks with `cd backend`, `pip install -r requirements-dev.txt`, and
+`pytest -q`. Tests use isolated in-memory databases and do not require a Groq key.
+Run `npm run build` and `npm run lint` from `frontend`.
+
+For a separately hosted frontend, explicitly set `VITE_API_BASE_URL` to your
+backend URL ending in `/api/v1` before building. Without this variable, requests
+use the same-origin `/api/v1` path (proxied to port 8000 during Vite development).
+Set `CORS_ALLOWED_ORIGINS` to your actual frontend origins on the backend.
+
+Docker Compose uses the root `.env` and starts the database, backend, and frontend.
+The backend creates missing tables at startup; this repository does not yet have
+an Alembic migration history. Existing schema changes require a migration plan.
+Copilot draft state is now stored in `copilot_sessions`, which startup creates.
+Image OCR requires both Tesseract and `pytesseract`; unavailable OCR is reported
+as requiring clarification rather than extracting invented data.

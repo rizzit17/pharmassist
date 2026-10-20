@@ -70,7 +70,7 @@ class Complaint(Base):
 
     # Relationships
     creator: Mapped[Optional["User"]] = relationship("User", back_populates="complaints")  # noqa: F821
-    ai_analyses: Mapped[list["AIAnalysis"]] = relationship("AIAnalysis", back_populates="complaint", cascade="all, delete-orphan")  # noqa: F821
+    ai_analyses: Mapped[list["AIAnalysis"]] = relationship("AIAnalysis", back_populates="complaint", cascade="all, delete-orphan", order_by="(AIAnalysis.created_at, AIAnalysis.id)")  # noqa: F821
     chat_messages: Mapped[list["ChatHistory"]] = relationship("ChatHistory", back_populates="complaint", cascade="all, delete-orphan")  # noqa: F821
     audit_logs: Mapped[list["AuditLog"]] = relationship("AuditLog", back_populates="complaint", cascade="all, delete-orphan")  # noqa: F821
     duplicate_flags: Mapped[list["DuplicateFlag"]] = relationship("DuplicateFlag", foreign_keys="DuplicateFlag.complaint_id", back_populates="complaint", cascade="all, delete-orphan")  # noqa: F821

@@ -31,18 +31,8 @@ def _build_assistant_message(state: ComplaintGraphState) -> str:
     if status == "needs_clarification":
         return state.get("assistant_message") or "Could you clarify your request?"
 
-    # GENERAL_QUERY or Greetings
-    text_lower = (state.get("user_message") or "").strip().lower()
-    greetings = {"hi", "hello", "hey", "good morning", "good afternoon", "hi there", "hello there", "help", "who are you"}
-
-    if intent == "GENERAL_QUERY" or text_lower in greetings or any(text_lower.startswith(g) for g in ["hi ", "hello ", "hey "]):
-        if text_lower in greetings or any(g in text_lower for g in ["hi copilot", "hello copilot", "hi", "hello", "hey"]):
-            return "Hello! I am your PharmAssist QA Copilot. I can help you extract customer complaints from plain text or PDF/email files, generate AI risk assessments, and manage your QMS records. How can I assist you today?"
-        
-        if state.get("assistant_message") and state["assistant_message"] != "I've processed your query.":
-            return state["assistant_message"]
-        
-        return "I am ready to assist with your QMS complaint logging. You can paste a complaint description, attach a file, or ask me a quality assurance question."
+    if intent in ("GENERAL_QUERY", "AMBIGUOUS"):
+        return state.get("assistant_message") or "Could you clarify your question?"
 
     # Build the primary response
     parts = []

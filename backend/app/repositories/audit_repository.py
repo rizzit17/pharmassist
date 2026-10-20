@@ -30,7 +30,7 @@ class AuditRepository:
             new_value=str(new_value) if new_value is not None else None,
         )
         self.db.add(entry)
-        await self.db.commit()
+        await self.db.flush()
         await self.db.refresh(entry)
         return entry
 

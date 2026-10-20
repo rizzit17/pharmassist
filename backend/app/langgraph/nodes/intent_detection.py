@@ -26,8 +26,12 @@ Your task is to classify the user's intent into exactly one of these categories:
 - AMBIGUOUS: The user's message references a value or correction but it's genuinely unclear WHICH field they mean to update (e.g., "actually it's 48" with multiple numeric fields in the current complaint). Prefer AMBIGUOUS over guessing.
 
 CRITICAL RULES:
+0. Questions about the current complaint ("manufacture date of these tablets?",
+"what is the weight?", "why this severity?") are GENERAL_QUERY. Reading a field
+is not editing it. Use EDIT_COMPLAINT only when the user supplies a new value or
+explicitly requests a correction. Product strength is distinct from tablet weight.
 1. If there is an existing complaint draft in context AND the user seems to be correcting/updating it, choose EDIT_COMPLAINT.
-2. If a file was mentioned as uploaded in the conversation, choose DOCUMENT_UPLOAD.
+2. Choose DOCUMENT_UPLOAD only when a file is attached to THIS turn, never just because an earlier message mentioned an upload.
 3. Prefer AMBIGUOUS over guessing when a correction references a value without naming which field, AND multiple candidate fields exist.
 4. Return ONLY valid JSON: {"intent": "ONE_OF_THE_FIVE_CATEGORIES", "reasoning": "brief explanation"}
 """
@@ -90,9 +94,5 @@ async def intent_detection_node(state: ComplaintGraphState) -> dict:
 
     except Exception as e:
         logger.warning("LLM intent detection failed (%s). Falling back to heuristic rules.", e)
-        text_lower = state.get("user_message", "").lower()
-        if any(kw in text_lower for kw in ["log", "complaint", "batch", "reported", "discolored", "defect", "product"]):
-            return {"intent": "NEW_COMPLAINT"}
-        elif any(kw in text_lower for kw in ["change", "update", "actually", "correct"]):
-            return {"intent": "EDIT_COMPLAINT"}
-        return {"intent": "NEW_COMPLAINT"}
+        # Fail conservatively: never route an unclassified question into extraction.
+        return {"intent": "GENERAL_QUERY"}

@@ -29,7 +29,7 @@ class ComplaintService:
         ai_analysis_data: Optional[dict] = None,
     ) -> ComplaintOut:
         """Create a new complaint and log the creation event."""
-        complaint_dict = data.model_dump(exclude_unset=False)
+        complaint_dict = data.model_dump(exclude={"risk_assessment", "ai_analysis"})
         complaint = await self.complaint_repo.create(complaint_dict, created_by=created_by)
 
         # Log creation
@@ -51,6 +51,8 @@ class ComplaintService:
                 new_value=ai_analysis_data.get("severity", ""),
             )
 
+        await self.db.commit()
+        complaint = await self.complaint_repo.get_by_id(complaint.id)
         return ComplaintOut.model_validate(complaint)
 
     async def get_complaint(self, complaint_id: str) -> Optional[ComplaintOut]:
@@ -88,13 +90,14 @@ class ComplaintService:
         actor: str = "human",
         actor_name: Optional[str] = None,
         updated_by_ai: bool = False,
+        commit: bool = True,
     ) -> Optional[ComplaintOut]:
         """Update a complaint and log each changed field to the audit trail."""
         existing = await self.complaint_repo.get_by_id(complaint_id)
         if not existing:
             return None
 
-        update_dict = data.model_dump(exclude_unset=True, exclude_none=True)
+        update_dict = data.model_dump(exclude_unset=True)
 
         # Log each field change
         for field, new_val in update_dict.items():
@@ -107,14 +110,18 @@ class ComplaintService:
                     action_type="ai_update" if updated_by_ai else "update",
                     field_name=field,
                     old_value=str(old_val) if old_val is not None else None,
-                    new_value=str(new_val),
+                    new_value=str(new_val) if new_val is not None else None,
                 )
 
         updated = await self.complaint_repo.update(complaint_id, update_dict)
+        if commit:
+            await self.db.commit()
         return ComplaintOut.model_validate(updated)
 
     async def delete_complaint(self, complaint_id: str) -> bool:
-        return await self.complaint_repo.delete(complaint_id)
+        deleted = await self.complaint_repo.delete(complaint_id)
+        await self.db.commit()
+        return deleted
 
     async def get_audit_trail(self, complaint_id: str) -> list:
         from app.schemas.audit import AuditLogOut
@@ -133,9 +140,13 @@ class ComplaintService:
             data=ComplaintUpdate(status="committed"),
             actor="human",
             actor_name=actor_name,
+            commit=False,
         )
 
-        if updated and ai_analysis_data:
+        if not updated:
+            return None
+
+        if ai_analysis_data:
             await self.complaint_repo.save_ai_analysis(complaint_id, ai_analysis_data)
 
         await self.audit_repo.log(
@@ -145,4 +156,5 @@ class ComplaintService:
             action_type="commit",
         )
 
-        return updated
+        await self.db.commit()
+        return await self.get_complaint(complaint_id)

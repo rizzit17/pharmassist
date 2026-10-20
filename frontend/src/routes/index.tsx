@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from '@/app/hooks'
 import AppShell from './AppShell'
@@ -28,6 +28,7 @@ export default function AppRouter() {
 
   return (
     <Routes>
+      <Route path="/welcome" element={<SplashScreen autoAdvance={false} />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/"

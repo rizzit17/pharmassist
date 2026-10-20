@@ -22,7 +22,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           cd frontend
-          npm install
+          npm ci
 
       - name: Build Frontend
         run: |
@@ -50,9 +50,14 @@ jobs:
         run: |
           cd backend
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
 
       - name: Test FastAPI Imports
         run: |
           cd backend
           python -c "import app.main; print('FastAPI App loaded successfully')"
+
+      - name: Run Backend Tests
+        run: |
+          cd backend
+          pytest -q

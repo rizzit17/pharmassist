@@ -49,12 +49,13 @@ class ComplaintRepository:
             **{k: v for k, v in data.items() if hasattr(Complaint, k) and k not in ("id", "complaint_number", "created_by", "created_at", "updated_at")},
         )
         self.db.add(complaint)
-        await self.db.commit()
+        await self.db.flush()
         return await self.get_by_id(complaint.id)
 
     async def get_by_id(self, complaint_id: str) -> Optional[Complaint]:
         result = await self.db.execute(
             select(Complaint)
+            .execution_options(populate_existing=True)
             .options(selectinload(Complaint.ai_analyses))
             .where(Complaint.id == complaint_id)
         )
@@ -96,7 +97,9 @@ class ComplaintRepository:
         total = count_result.scalar() or 0
 
         # Sorting
-        sort_col = getattr(Complaint, sort_by, Complaint.created_at)
+        sort_col = Complaint.__table__.columns.get(sort_by)
+        if sort_col is None:
+            sort_col = Complaint.created_at
         if sort_order == "desc":
             query = query.order_by(sort_col.desc())
         else:
@@ -114,7 +117,7 @@ class ComplaintRepository:
             if hasattr(complaint, key) and key not in ("id", "complaint_number", "created_by", "created_at"):
                 setattr(complaint, key, value)
         complaint.updated_at = datetime.now(timezone.utc)
-        await self.db.commit()
+        await self.db.flush()
         return await self.get_by_id(complaint_id)
 
     async def delete(self, complaint_id: str) -> bool:
@@ -122,7 +125,7 @@ class ComplaintRepository:
         if not complaint:
             return False
         await self.db.delete(complaint)
-        await self.db.commit()
+        await self.db.flush()
         return True
 
     async def get_duplicates_candidates(
@@ -148,6 +151,6 @@ class ComplaintRepository:
     async def save_ai_analysis(self, complaint_id: str, analysis_data: dict) -> AIAnalysis:
         analysis = AIAnalysis(complaint_id=complaint_id, **analysis_data)
         self.db.add(analysis)
-        await self.db.commit()
+        await self.db.flush()
         await self.db.refresh(analysis)
         return analysis

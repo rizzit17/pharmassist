@@ -13,6 +13,7 @@ from app.langgraph.state import ComplaintGraphState
 from app.repositories.chat_repository import ChatRepository
 from app.repositories.audit_repository import AuditRepository
 from app.schemas.copilot import CopilotResponseEnvelope
+from app.models.copilot_session import CopilotSession
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ def _state_to_envelope(state: ComplaintGraphState, session_id: str) -> CopilotRe
         confidence_scores=state.get("confidence_scores") or {},
         risk_assessment=state.get("risk_assessment"),
         recommendations=state.get("recommendations"),
-        completeness=state.get("completeness"),
+        completeness={"is_complete": False, "missing_fields": []} if state.get("status") == "error" else state.get("completeness"),
         duplicate_warning=state.get("duplicate_warning"),
         assistant_message=state.get("assistant_message", ""),
         status=state.get("status", "success"),
@@ -46,6 +47,21 @@ class CopilotService:
         self.chat_repo = ChatRepository(db)
         self.audit_repo = AuditRepository(db)
 
+    async def load_state(self, session_id: str) -> dict:
+        saved = await self.db.get(CopilotSession, session_id)
+        return dict(saved.state) if saved else {}
+
+    async def save_state(self, session_id: str, state: dict) -> None:
+        # Persist only reusable draft data, never transient errors or upload paths.
+        keys = ("complaint", "risk_assessment", "recommendations", "completeness", "duplicate_warning", "confidence_scores")
+        reusable = {key: state.get(key) for key in keys if key in state}
+        saved = await self.db.get(CopilotSession, session_id)
+        if saved is None:
+            self.db.add(CopilotSession(id=session_id, state=reusable))
+        else:
+            saved.state = reusable
+        await self.db.commit()
+
     async def process_chat(
         self,
         message: str,
@@ -58,6 +74,9 @@ class CopilotService:
         Manages session continuity via LangGraph checkpointing.
         """
         session_id = session_id or str(uuid.uuid4())
+        previous_state = await self.load_state(session_id)
+        if current_complaint is None:
+            current_complaint = previous_state.get("complaint") or {}
 
         # Load chat history for this session
         history_messages = await self.chat_repo.get_session_history(session_id)
@@ -79,6 +98,7 @@ class CopilotService:
 
         # Initial state for this turn
         initial_state: ComplaintGraphState = {
+            **previous_state,
             "session_id": session_id,
             "complaint_id": complaint_id,
             "user_message": message,
@@ -111,6 +131,7 @@ class CopilotService:
             complaint_id=complaint_id,
         )
 
+        await self.save_state(session_id, final_state)
         return _state_to_envelope(final_state, session_id)
 
     async def process_upload(
@@ -126,6 +147,9 @@ class CopilotService:
         Forces intent=DOCUMENT_UPLOAD and routes through extraction.
         """
         session_id = session_id or str(uuid.uuid4())
+        previous_state = await self.load_state(session_id)
+        if current_complaint is None:
+            current_complaint = previous_state.get("complaint") or {}
 
         # Save file upload as user message
         await self.chat_repo.save_message(
@@ -145,6 +169,7 @@ class CopilotService:
         graph = build_graph(db_session=self.db)
 
         initial_state: ComplaintGraphState = {
+            **previous_state,
             "session_id": session_id,
             "complaint_id": complaint_id,
             "user_message": f"[Document uploaded: {file_name}]",
@@ -178,6 +203,7 @@ class CopilotService:
             complaint_id=complaint_id,
         )
 
+        await self.save_state(session_id, final_state)
         return _state_to_envelope(final_state, session_id)
 
     async def get_session_history(self, session_id: str) -> list:

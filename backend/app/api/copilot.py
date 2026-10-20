@@ -104,8 +104,8 @@ async def run_risk_assessment(
         complaint=data.complaint,
         risk_assessment=state.get("risk_assessment"),
         recommendations=state.get("recommendations"),
-        assistant_message="Risk assessment refreshed.",
-        status="success",
+        assistant_message=state.get("assistant_message", "Risk assessment refreshed."),
+        status="error" if state.get("status") == "error" else "success",
     )
 
 
@@ -135,6 +135,8 @@ async def generate_summary(
         from app.services.complaint_service import ComplaintService
         service = ComplaintService(db)
         c = await service.get_complaint(data.complaint_id)
+        if not c:
+            raise HTTPException(status_code=404, detail="Complaint not found.")
         if c:
             complaint_data = c.model_dump() if hasattr(c, "model_dump") else c.__dict__
 

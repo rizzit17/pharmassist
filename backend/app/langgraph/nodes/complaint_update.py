@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 # Fields whose changes warrant a risk re-analysis run
 MATERIAL_FIELDS = {
+    "product_name",
+    "product_strength",
     "batch_lot_number",
     "affected_quantity",
     "manufacturing_date",

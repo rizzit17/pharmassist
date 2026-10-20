@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <title>PharmAssist PA monogram</title>
+  <rect width="80" height="80" rx="23" fill="#173C34"/>
+  <!-- P: an extended stem and an upper bowl, leaving its lower half open. -->
+  <path d="M21 60V21H37C45 21 49 25 49 32S45 43 37 43H21" stroke="#F7F9F6" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- A crosses the P bowl; two legs and a crossbar remain distinct. -->
+  <path d="M33 60L47 25L62 60M39 47H56" stroke="#A6C5B1" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

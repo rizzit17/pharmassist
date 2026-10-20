@@ -2,17 +2,7 @@ import axios from 'axios'
 
 const getBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL
-  if (envUrl && envUrl.startsWith('http')) {
-    return envUrl
-  }
-  // When running on Vercel or remote host, default directly to live Render backend
-  if (
-    typeof window !== 'undefined' &&
-    !window.location.hostname.includes('localhost') &&
-    !window.location.hostname.includes('127.0.0.1')
-  ) {
-    return 'https://aivoa-backend-5t5q.onrender.com/api/v1'
-  }
+  if (envUrl) return envUrl
   return '/api/v1'
 }
 
@@ -59,8 +49,14 @@ axiosClient.interceptors.response.use(
       }
     }
 
+    const detail = error.response?.data?.detail
+    const validationMessage = Array.isArray(detail)
+      ? detail.map((item: { loc?: (string | number)[]; msg?: string }) =>
+          `${item.loc?.slice(1).join('.') || 'Request'}: ${item.msg || 'Invalid value'}`
+        ).join('; ')
+      : detail
     const message =
-      error.response?.data?.detail ||
+      validationMessage ||
       error.response?.data?.message ||
       error.message ||
       'An unexpected error occurred'

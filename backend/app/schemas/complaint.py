@@ -1,8 +1,22 @@
 """Pydantic schemas for Complaint CRUD operations."""
 from __future__ import annotations
 from datetime import date, datetime
-from typing import Optional, List
-from pydantic import BaseModel, Field
+from typing import Optional, List, Literal
+from pydantic import BaseModel, Field, field_validator
+
+
+ComplaintStatus = Literal["draft", "pending_triage", "ready_to_commit", "committed", "under_investigation", "capa_assigned", "closed"]
+
+
+class AIAnalysisCreate(BaseModel):
+    severity: Optional[Literal["Critical", "Major", "Minor"]] = None
+    suggested_next_action: Optional[str] = None
+    initial_risk_assessment: Optional[str] = None
+    regulatory_reportable: Optional[bool] = None
+    root_cause_suggestions: Optional[List[str]] = None
+    capa_suggestions: Optional[List[str]] = None
+    confidence_scores: Optional[dict] = None
+    model_used: Optional[str] = None
 
 
 class ComplaintBase(BaseModel):
@@ -22,14 +36,21 @@ class ComplaintBase(BaseModel):
 
 class ComplaintCreate(ComplaintBase):
     """Schema for creating a new complaint (manual or AI-populated)."""
-    status: Optional[str] = "draft"
-    risk_assessment: Optional[dict] = None
-    ai_analysis: Optional[dict] = None
+    status: ComplaintStatus = "draft"
+    risk_assessment: Optional[AIAnalysisCreate] = None
+    ai_analysis: Optional[AIAnalysisCreate] = None
 
 
 class ComplaintUpdate(ComplaintBase):
     """Schema for partially updating a complaint."""
-    status: Optional[str] = None
+    status: Optional[ComplaintStatus] = None
+
+    @field_validator("status")
+    @classmethod
+    def status_cannot_be_null(cls, value):
+        if value is None:
+            raise ValueError("status cannot be null")
+        return value
 
 
 class AIAnalysisOut(BaseModel):

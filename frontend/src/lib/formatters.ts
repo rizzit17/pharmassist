@@ -38,7 +38,7 @@ export const getStatusColor = (status: ComplaintStatus): string => {
     draft: 'text-slate-600 bg-slate-100 dark:bg-slate-800 dark:text-slate-300',
     pending_triage: 'text-amber-700 bg-amber-50 dark:bg-amber-950/50 dark:text-amber-300',
     ready_to_commit: 'text-emerald-700 bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-300',
-    committed: 'text-indigo-700 bg-indigo-50 dark:bg-indigo-950/50 dark:text-indigo-300',
+    committed: 'text-brand-700 bg-brand-50 dark:bg-brand-950/50 dark:text-brand-300',
     under_investigation: 'text-cyan-700 bg-cyan-50 dark:bg-cyan-950/50 dark:text-cyan-300',
     capa_assigned: 'text-purple-700 bg-purple-50 dark:bg-purple-950/50 dark:text-purple-300',
     closed: 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400',

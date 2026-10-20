@@ -18,7 +18,7 @@ const SEVERITY_PALETTE = {
   Critical: '#EF4444',
   Major: '#F59E0B',
   Minor: '#10B981',
-  Unknown: '#94A3B8',
+  Unknown: '#829487',
 }
 
 export default function DashboardPage() {
@@ -59,15 +59,15 @@ export default function DashboardPage() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Quality &amp; Complaints Dashboard
+              Quality overview
             </h1>
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span>GxP Compliant</span>
+              <span>Quality workspace</span>
             </div>
           </div>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Real-time surveillance and automated risk triage for batch manufacturing
+            A clear view of complaints, investigations, and product quality.
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export default function DashboardPage() {
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Total Complaints
             </span>
-            <div className="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 flex items-center justify-center">
               <ClipboardList className="w-4 h-4" />
             </div>
           </div>
@@ -221,14 +221,14 @@ export default function DashboardPage() {
                         {charts.severity_distribution.map((entry: any, idx: number) => (
                           <Cell
                             key={idx}
-                            fill={SEVERITY_PALETTE[entry.severity as keyof typeof SEVERITY_PALETTE] || '#94A3B8'}
+                            fill={SEVERITY_PALETTE[entry.severity as keyof typeof SEVERITY_PALETTE] || '#829487'}
                             stroke="transparent"
                           />
                         ))}
                       </Pie>
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#0F172A',
+                          backgroundColor: '#173C34',
                           borderColor: '#334155',
                           borderRadius: '8px',
                           color: '#FFFFFF',
@@ -250,7 +250,7 @@ export default function DashboardPage() {
                 {/* Clean Horizontal Legend */}
                 <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                   {charts.severity_distribution.map((entry: any, idx: number) => {
-                    const color = SEVERITY_PALETTE[entry.severity as keyof typeof SEVERITY_PALETTE] || '#94A3B8'
+                    const color = SEVERITY_PALETTE[entry.severity as keyof typeof SEVERITY_PALETTE] || '#829487'
                     return (
                       <div key={idx} className="text-center p-2 rounded-lg bg-slate-50 dark:bg-slate-900/60">
                         <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
@@ -280,7 +280,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-base font-bold text-slate-900 dark:text-white">
-                  Monthly Intake Trajectory
+                  Complaint trends
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Volume progression across reporting cycles
@@ -296,11 +296,11 @@ export default function DashboardPage() {
               <div className="h-56 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={charts.monthly_trend} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" opacity={0.4} vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#DFE6DE" opacity={0.4} vertical={false} />
                     <XAxis
                       dataKey="month"
                       tick={{ fontSize: 11, fill: '#64748B' }}
-                      axisLine={{ stroke: '#E2E8F0' }}
+                      axisLine={{ stroke: '#DFE6DE' }}
                       tickLine={false}
                     />
                     <YAxis
@@ -312,7 +312,7 @@ export default function DashboardPage() {
                     <Tooltip
                       cursor={{ fill: 'rgba(99, 102, 241, 0.06)' }}
                       contentStyle={{
-                        backgroundColor: '#0F172A',
+                        backgroundColor: '#173C34',
                         borderColor: '#334155',
                         borderRadius: '8px',
                         color: '#FFFFFF',
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                     />
                     <Bar
                       dataKey="count"
-                      fill="#6366F1"
+                      fill="#537E66"
                       radius={[4, 4, 0, 0]}
                       maxBarSize={36}
                     />
@@ -351,7 +351,7 @@ export default function DashboardPage() {
           </div>
           <button
             onClick={() => navigate('/complaints')}
-            className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-1 transition-colors"
+            className="text-xs font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 flex items-center gap-1 transition-colors"
           >
             View All <ChevronRight className="w-4 h-4" />
           </button>
@@ -390,7 +390,7 @@ export default function DashboardPage() {
                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 cursor-pointer transition-colors"
                         onClick={() => navigate(`/complaints/${c.id}`)}
                       >
-                        <td className="px-6 py-3.5 font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                        <td className="px-6 py-3.5 font-mono text-xs font-semibold text-brand-600 dark:text-brand-400">
                           {c.complaint_number}
                         </td>
                         <td className="px-6 py-3.5 font-medium text-slate-900 dark:text-slate-100">
@@ -430,7 +430,7 @@ export default function DashboardPage() {
                     <p className="text-xs text-slate-400 mt-1">
                       <button
                         onClick={() => navigate('/complaints/new')}
-                        className="text-indigo-600 hover:underline font-semibold"
+                        className="text-brand-600 hover:underline font-semibold"
                       >
                         Log your first complaint →
                       </button>

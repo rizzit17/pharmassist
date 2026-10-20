@@ -27,6 +27,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.langgraph.state import ComplaintGraphState
+from app.langgraph.nodes.conversation import conversation_node
 from app.langgraph.nodes.intent_detection import intent_detection_node
 from app.langgraph.nodes.input_type_detection import input_type_detection_node
 from app.langgraph.nodes.complaint_extraction import complaint_extraction_node
@@ -51,8 +52,7 @@ def route_after_input_type(state: ComplaintGraphState) -> str:
     elif intent == "EDIT_COMPLAINT":
         return "complaint_update"
     else:
-        # GENERAL_QUERY or AMBIGUOUS — skip to response_formatter
-        return "response_formatter"
+        return "conversation"
 
 
 def route_after_extraction_or_update(state: ComplaintGraphState) -> str:
@@ -81,7 +81,7 @@ def route_after_duplicate(state: ComplaintGraphState) -> str:
     requires_rerun = state.get("requires_risk_rerun", False)
 
     # Per IMPLEMENTATION_NOTES decision 2: skip risk on non-material EDIT_COMPLAINT
-    if intent == "EDIT_COMPLAINT" and not requires_rerun:
+    if intent == "EDIT_COMPLAINT" and not requires_rerun and (state.get("risk_assessment") or {}).get("severity"):
         logger.info("Routing: skipping risk_analysis (non-material edit)")
         return "recommendation"  # Skip risk but still run recommendation/summary
 
@@ -109,9 +109,14 @@ def build_graph(db_session=None) -> StateGraph:
     async def _duplicate_detection_with_db(state: ComplaintGraphState) -> dict:
         return await duplicate_detection_node(state, db_session=db_session)
 
+    async def _conversation_with_db(state):
+        return await conversation_node(state, db_session=db_session)
+
     graph = StateGraph(ComplaintGraphState)
 
     # Register nodes
+    graph.add_node("conversation", _conversation_with_db)
+    graph.add_edge("conversation", "response_formatter")
     graph.add_node("intent_detection", intent_detection_node)
     graph.add_node("input_type_detection", input_type_detection_node)
     graph.add_node("complaint_extraction", complaint_extraction_node)
@@ -134,7 +139,7 @@ def build_graph(db_session=None) -> StateGraph:
         {
             "complaint_extraction": "complaint_extraction",
             "complaint_update": "complaint_update",
-            "response_formatter": "response_formatter",
+            "conversation": "conversation",
         },
     )
 

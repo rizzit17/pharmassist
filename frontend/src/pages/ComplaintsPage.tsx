@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Filter, ChevronLeft, ChevronRight, FileText, Trash2 } from 'lucide-react'
+import { Search, Plus, Filter, ChevronLeft, ChevronRight, FileText, Trash2, Download } from 'lucide-react'
+import { downloadComplaints } from '@/lib/csv'
 import { complaintsApi } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
@@ -19,27 +20,36 @@ export default function ComplaintsPage() {
   const [status, setStatus] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
-  const load = async () => {
+  const requestId = useRef(0)
+  const load = useCallback(async () => {
+    const currentRequest = ++requestId.current
     setIsLoading(true)
     try {
       const data = await complaintsApi.list({
         page, page_size: 20, search: search || undefined, status: status || undefined
       })
+      if (currentRequest !== requestId.current) return
+      if (!data.items.length && page > 1) {
+        setPage(Math.max(1, data.total_pages))
+        return
+      }
       setComplaints(data.items)
       setTotal(data.total)
       setTotalPages(data.total_pages)
     } catch (err) {
       console.error(err)
     } finally {
-      setIsLoading(false)
+      if (currentRequest === requestId.current) setIsLoading(false)
     }
-  }
+  }, [page, search, status])
 
-  useEffect(() => { load() }, [page, status])
   useEffect(() => {
-    const timer = setTimeout(load, 350)
-    return () => clearTimeout(timer)
-  }, [search])
+    const timer = setTimeout(() => { void load() }, 350)
+    return () => {
+      clearTimeout(timer)
+      requestId.current += 1
+    }
+  }, [load])
 
   return (
     <div className="p-5 sm:p-8 max-w-7xl mx-auto space-y-6">
@@ -64,6 +74,10 @@ export default function ComplaintsPage() {
         </Button>
       </div>
 
+      <div className="flex items-center justify-between gap-3 text-xs text-slate-500">
+        <p>Find a record, review its status, or take your current view with you.</p>
+        <Button variant="secondary" size="sm" disabled={isLoading || !complaints.length} onClick={() => downloadComplaints(complaints)} leftIcon={<Download className="w-4 h-4" />} title="Download the records shown on this page as CSV">Export this page</Button>
+      </div>
       {/* Filter & Search Bar */}
       <div className="card p-3 flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
@@ -71,9 +85,9 @@ export default function ComplaintsPage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             placeholder="Search by product, batch number, or customer…"
-            className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-slate-900 dark:text-white"
+            className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all text-slate-900 dark:text-white"
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -82,7 +96,7 @@ export default function ComplaintsPage() {
             <select
               value={status}
               onChange={(e) => { setStatus(e.target.value); setPage(1) }}
-              className="w-full sm:w-auto text-xs pl-8 pr-8 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-indigo-500 transition-all text-slate-900 dark:text-white appearance-none cursor-pointer"
+              className="w-full sm:w-auto text-xs pl-8 pr-8 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-brand-500 transition-all text-slate-900 dark:text-white appearance-none cursor-pointer"
             >
               <option value="">All Statuses</option>
               {STATUS_OPTIONS.slice(1).map((s) => (
@@ -128,7 +142,7 @@ export default function ComplaintsPage() {
                         className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 cursor-pointer transition-colors"
                         onClick={() => navigate(`/complaints/${c.id}`)}
                       >
-                        <td className="px-6 py-3.5 font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                        <td className="px-6 py-3.5 font-mono text-xs font-semibold text-brand-600 dark:text-brand-400 whitespace-nowrap">
                           {c.complaint_number}
                         </td>
                         <td className="px-6 py-3.5 text-slate-700 dark:text-slate-300 font-medium text-xs">
@@ -195,7 +209,7 @@ export default function ComplaintsPage() {
                       Try clearing filters or{' '}
                       <button
                         onClick={() => navigate('/complaints/new')}
-                        className="text-indigo-600 hover:underline font-semibold"
+                        className="text-brand-600 hover:underline font-semibold"
                       >
                         create a new complaint
                       </button>

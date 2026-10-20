@@ -7,3 +7,5 @@ from app.models.audit_log import AuditLog
 from app.models.duplicate_flag import DuplicateFlag
 
 __all__ = ["User", "Complaint", "AIAnalysis", "ChatHistory", "AuditLog", "DuplicateFlag"]
+
+from app.models.copilot_session import CopilotSession

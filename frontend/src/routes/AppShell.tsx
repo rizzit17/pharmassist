@@ -12,10 +12,13 @@ import {
   Sun,
   Menu,
   X,
+  Activity,
+  ShieldCheck,
 } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { logout } from '@/features/auth/authSlice'
 import { toggleTheme } from '@/features/settings/themeSlice'
+import CommandMenu from '@/components/CommandMenu'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -41,41 +44,45 @@ export default function AppShell() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-[#F8FAFC] dark:bg-[#0C0F17] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#F7F9F6] dark:bg-[#101D17] text-slate-900 dark:text-slate-100">
+      <div className="fixed right-24 top-3 lg:top-[112px] lg:left-4 lg:right-auto lg:w-56 z-40"><CommandMenu /></div>
       {/* ── DESKTOP SIDEBAR ───────────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-60 border-r border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#101420] h-screen sticky top-0 z-30">
+      <aside className="hidden lg:flex flex-col workspace-sidebar w-64 shrink-0 border-r border-slate-200/80 dark:border-slate-800/80 h-screen sticky top-0 z-30">
         {/* Brand Mark */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center p-1.5 shadow-sm">
-            <img src="/logo.png" alt="PharmAssist" className="w-full h-full object-contain" />
+        <div className="px-6 py-7 border-b border-slate-100 dark:border-slate-800/80 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center shadow-sm">
+            <img src="/pharmassist-mark.svg" alt="PharmAssist" className="w-full h-full object-contain" />
           </div>
           <div>
             <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white block">
               PharmAssist
             </span>
             <span className="text-[11px] text-slate-400 block font-medium">
-              QMS Platform
+              Quality care, connected
             </span>
           </div>
         </div>
 
+        <div className="h-16" />
+
         {/* Nav Links */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav aria-label="Main navigation" className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+          <p className="px-3.5 pb-3 text-[10px] font-semibold tracking-[0.16em] text-slate-500 uppercase">Workspace</p>
           {navItems.map((item) => {
             const Icon = item.icon
-            const isActive = location.pathname === item.path || (item.path !== '/dashboard' && location.pathname.startsWith(item.path))
+            const isActive = location.pathname === item.path || (item.path === '/complaints' && location.pathname.startsWith('/complaints/') && location.pathname !== '/complaints/new')
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors',
+                  'flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-colors',
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 font-semibold'
+                    ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 font-semibold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50'
                 )}
               >
-                <Icon className={cn('w-4 h-4', isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400')} />
+                <Icon className={cn('w-4 h-4', isActive ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400')} />
                 <span>{item.label}</span>
               </NavLink>
             )
@@ -119,10 +126,10 @@ export default function AppShell() {
       </aside>
 
       {/* ── MOBILE HEADER BAR ─────────────────────────────────────── */}
-      <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101420] sticky top-0 z-40">
+      <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#17271F] sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded bg-indigo-600 p-1">
-            <img src="/logo.png" alt="PharmAssist" className="w-full h-full object-contain" />
+          <div className="w-8 h-8 rounded-lg">
+            <img src="/pharmassist-mark.svg" alt="PharmAssist" className="w-full h-full object-contain" />
           </div>
           <span className="font-bold text-sm text-slate-900 dark:text-white">PharmAssist</span>
         </div>
@@ -130,12 +137,15 @@ export default function AppShell() {
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => dispatch(toggleTheme())}
+            aria-label="Toggle theme"
             className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white"
           >
             {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={mobileOpen}
             className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -173,7 +183,11 @@ export default function AppShell() {
       )}
 
       {/* ── MAIN CONTENT OUTLET ───────────────────────────────────── */}
-      <main className="flex-1 overflow-x-hidden min-h-screen">
+      <main className="workspace-content flex-1 min-w-0 overflow-x-hidden min-h-screen">
+        <div className="workspace-header hidden lg:flex items-center justify-between px-8 py-4">
+          <div className="flex items-center gap-2 text-xs text-slate-500"><Activity className="w-4 h-4 text-brand-600 dark:text-brand-300" /><span>Quality workspace</span><span className="px-1 text-slate-300">/</span><span className="text-slate-700 dark:text-slate-200">{navItems.find(item => item.path === location.pathname)?.label || 'Complaint details'}</span></div>
+          <span className="flex items-center gap-1.5 text-xs text-slate-500"><ShieldCheck className="w-3.5 h-3.5" />Pharmaceutical quality management</span>
+        </div>
         <Outlet />
       </main>
     </div>

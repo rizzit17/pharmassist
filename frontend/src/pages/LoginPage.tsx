@@ -60,29 +60,29 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-white">
-      <div className="w-full max-w-5xl rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#111625] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 bg-slate-50 dark:bg-[#101D17] text-slate-900 dark:text-white">
+      <div className="w-full max-w-5xl rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#17271F] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
         
         {/* ── Left Side: Platform Brief & Capabilities (5 Cols) ── */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-950 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-white relative overflow-hidden">
+        <div className="lg:col-span-5 bg-brand-900 p-6 sm:p-8 lg:p-10 flex flex-col justify-between text-white relative overflow-hidden">
           {/* Subtle Ambient Glow */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Top Brand Header */}
           <div className="relative z-10 space-y-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/10 p-1.5 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-                <img src="/logo.png" alt="PharmAssist Logo" className="w-full h-full object-contain" />
+                <img src="/pharmassist-mark.svg" alt="PharmAssist Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
                   PharmAssist
-                  <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-brand-500/30 text-brand-200 border border-brand-400/30">
                     GxP AI
                   </span>
                 </h1>
-                <p className="text-xs text-indigo-200/80">Quality &amp; Complaint Surveillance</p>
+                <p className="text-xs text-brand-200/80">Quality &amp; Complaint Surveillance</p>
               </div>
             </div>
 
@@ -91,7 +91,7 @@ export default function LoginPage() {
               <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
                 Autonomous Quality Intelligence for Pharma
               </h2>
-              <p className="text-xs text-indigo-100/70 leading-relaxed">
+              <p className="text-xs text-brand-100/70 leading-relaxed">
                 Streamline customer complaint intake, automate ICH Q9/Q10 risk triage, and maintain continuous 21 CFR Part 11 compliance.
               </p>
             </div>
@@ -99,36 +99,36 @@ export default function LoginPage() {
             {/* Feature Bullets */}
             <div className="space-y-3 pt-2">
               <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
-                <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-300 shrink-0 mt-0.5">
+                <div className="p-2 rounded-lg bg-brand-500/20 text-brand-300 shrink-0 mt-0.5">
                   <FileCheck2 className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-semibold text-white">AI Document Extraction</h3>
-                  <p className="text-[11px] text-indigo-200/70 mt-0.5 leading-relaxed">
+                  <p className="text-[11px] text-brand-200/70 mt-0.5 leading-relaxed">
                     Auto-ingest PDFs, lab reports, and intake emails with instant entity extraction.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
-                <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-300 shrink-0 mt-0.5">
+                <div className="p-2 rounded-lg bg-brand-500/20 text-brand-300 shrink-0 mt-0.5">
                   <AlertOctagon className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-semibold text-white">ICH Risk Classification</h3>
-                  <p className="text-[11px] text-indigo-200/70 mt-0.5 leading-relaxed">
+                  <p className="text-[11px] text-brand-200/70 mt-0.5 leading-relaxed">
                     Real-time severity grading, defect categorization, and regulatory reportability flags.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
-                <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-300 shrink-0 mt-0.5">
+                <div className="p-2 rounded-lg bg-brand-500/20 text-brand-300 shrink-0 mt-0.5">
                   <BarChart3 className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-semibold text-white">Batch &amp; Site Surveillance</h3>
-                  <p className="text-[11px] text-indigo-200/70 mt-0.5 leading-relaxed">
+                  <p className="text-[11px] text-brand-200/70 mt-0.5 leading-relaxed">
                     Live batch cluster monitoring, trend analytics, and CAPA resolution workflows.
                   </p>
                 </div>
@@ -137,9 +137,9 @@ export default function LoginPage() {
           </div>
 
           {/* Bottom Compliance Tags */}
-          <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between text-[11px] text-indigo-200/70">
+          <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between text-[11px] text-brand-200/70">
             <span className="flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
               21 CFR Part 11
             </span>
             <span>·</span>
@@ -152,8 +152,8 @@ export default function LoginPage() {
         {/* ── Right Side: Sign In Form (7 Cols) ── */}
         <div className="lg:col-span-7 p-6 sm:p-8 lg:p-12 flex flex-col justify-center space-y-6">
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
               Secure Enterprise Portal
             </div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
@@ -186,7 +186,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="demo@pharmassist.com"
-                  className="w-full pl-10 pr-3.5 py-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full pl-10 pr-3.5 py-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
                 />
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function LoginPage() {
                 <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Password
                 </label>
-                <span className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
+                <span className="text-[11px] text-brand-600 dark:text-brand-400 hover:underline cursor-pointer">
                   Forgot password?
                 </span>
               </div>
@@ -208,7 +208,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full pl-10 pr-10 py-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
                 />
                 <button
                   type="button"
@@ -238,7 +238,7 @@ export default function LoginPage() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-slate-200 dark:border-slate-800" />
               </div>
-              <div className="relative px-3 bg-white dark:bg-[#111625] text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+              <div className="relative px-3 bg-white dark:bg-[#17271F] text-[11px] font-medium text-slate-400 uppercase tracking-wider">
                 Or Instant Demo Access
               </div>
             </div>
@@ -247,13 +247,13 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => handleQuickDemo('demo@pharmassist.com')}
-                className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700/80 hover:border-indigo-500 dark:hover:border-indigo-500 bg-slate-50/60 dark:bg-slate-900/60 text-left transition-all group"
+                className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700/80 hover:border-brand-500 dark:hover:border-brand-500 bg-slate-50/60 dark:bg-slate-900/60 text-left transition-all group"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  <span className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400">
                     QA Specialist
                   </span>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-0.5">Intake &amp; Risk Triage</p>
               </button>
@@ -261,13 +261,13 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => handleQuickDemo('admin@pharmassist.com')}
-                className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700/80 hover:border-indigo-500 dark:hover:border-indigo-500 bg-slate-50/60 dark:bg-slate-900/60 text-left transition-all group"
+                className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700/80 hover:border-brand-500 dark:hover:border-brand-500 bg-slate-50/60 dark:bg-slate-900/60 text-left transition-all group"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  <span className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400">
                     QA Lead / Admin
                   </span>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-0.5">Approvals &amp; CAPA</p>
               </button>

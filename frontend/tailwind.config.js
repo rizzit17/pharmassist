@@ -12,20 +12,9 @@ export default {
         mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       colors: {
+        slate: {50: "#F7F9F6", 100: "#EEF2ED", 200: "#DFE6DE", 300: "#C6D1C7", 400: "#829487", 500: "#617568", 600: "#4B6053", 700: "#354B3E", 800: "#253A2E", 900: "#192D23", 950: "#0F1D16"},
         // BioTech Pro Clinical Precision Palette
-        brand: {
-          50: '#EEF2FF',
-          100: '#E0E7FF',
-          200: '#C7D2FE',
-          300: '#A5B4FC',
-          400: '#818CF8',
-          500: '#6366F1',
-          600: '#4F46E5', // Precision Indigo
-          700: '#4338CA',
-          800: '#3730A3',
-          900: '#312E81',
-          950: '#1E1B4B',
-        },
+        brand: {50: "#F0F5F1", 100: "#E3EDE5", 200: "#C8DCCD", 300: "#A6C5B1", 400: "#7AA58B", 500: "#537E66", 600: "#285943", 700: "#204B39", 800: "#173C34", 900: "#142F29", 950: "#0C211C"},
         cyan: {
           50: '#ECFEFF',
           100: '#CFFAFE',
@@ -93,19 +82,7 @@ export default {
           950: '#0B0F19', // Obsidian Titanium
         },
         // Primary alias
-        primary: {
-          50: '#EEF2FF',
-          100: '#E0E7FF',
-          200: '#C7D2FE',
-          300: '#A5B4FC',
-          400: '#818CF8',
-          500: '#6366F1',
-          600: '#4F46E5',
-          700: '#4338CA',
-          800: '#3730A3',
-          900: '#312E81',
-          950: '#1E1B4B',
-        },
+        primary: {50: "#F0F5F1", 100: "#E3EDE5", 200: "#C8DCCD", 300: "#A6C5B1", 400: "#7AA58B", 500: "#537E66", 600: "#285943", 700: "#204B39", 800: "#173C34", 900: "#142F29", 950: "#0C211C"},
         // Dark palette
         dark: {
           bg: '#0B0F19',

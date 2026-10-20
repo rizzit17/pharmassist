@@ -5,7 +5,7 @@ All secrets must come from .env or Docker environment; never hardcoded here.
 from functools import lru_cache
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import field_validator
+from pydantic import Field, AliasChoices
 
 
 class Settings(BaseSettings):
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     groq_max_retries: int = 2
 
     # ── CORS ──────────────────────────────────────────────────────
-    cors_allowed_origins_str: str = "http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000"
+    cors_allowed_origins_str: str = Field(validation_alias=AliasChoices("CORS_ALLOWED_ORIGINS", "cors_allowed_origins_str"), default="http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000")
 
     @property
     def cors_allowed_origins(self) -> List[str]:

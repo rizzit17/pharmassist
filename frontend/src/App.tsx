@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react'
+import React from 'react'
 import AppRouter from './routes'
 
 // Global error boundary
